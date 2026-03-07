@@ -1,0 +1,18 @@
+server:
+  port: 8088
+spring:
+  application:
+    name: edu
+  thymeleaf:
+    cache: false
+    prefix: file:src/main/resources/templates/
+    suffix: .html
+  web:
+    resources:
+      static-locations: file:src/main/resources/static/
+
+  devtools:
+    restart:
+      enabled: true
+    livereload:
+      enabled: true
