@@ -9,17 +9,64 @@
         bean_output = {
             url: '/ch2/bean-output',
             init:function(){
-
+                document.querySelector("#send_btn").addEventListener("click", ()=>{
+                    this.send();
+                })
                 document.querySelector("#spinner").style.cssText = "visibility:hidden;";
             },
             makeQuestionHtml:function(location, content, language){
-
+                const questionArea = document.createElement("div");
+                questionArea.innerHTML = `
+                                <div class="d-flex justify-content-between">
+                                    <p class="small mb-1">User</p>
+                                    <p class="small mb-1 text-muted">`+new Date().toLocaleTimeString('ko-kr')+`</p>
+                                </div>
+                                <div class="d-flex flex-row justify-content-start">
+                                    <img src="/imgs/user.jpg"
+                                         alt="User" style="width: 45px; height: 100%;">
+                                    <div>
+                                        <p class="small p-2 ms-3 mb-3 rounded-3 bg-body-tertiary bg-warning">
+                                        `+location+`지역에 `+content+`정보를 `+language+`로 알려줘
+                                        </p>
+                                    </div>
+                                </div>
+                                `;
+                document.querySelector('#result').prepend(questionArea);
             },
             send:async function(){
-
+                document.querySelector('#spinner').style.cssText = "visibility:visible;";
+                const location = document.querySelector('#location').value;
+                const content = document.querySelector('#content').value;
+                const language = document.querySelector('#language').value;
+                this.makeQuestionHtml(location, content, language);
+                const response = await fetch(this.url, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                        'Accept': 'application/json'
+                    },
+                    body: new URLSearchParams({location: location, content:content, language:language})
+                });
+                const responseText = await  response.text();
+                this.responseDisplay(responseText);
             },
             responseDisplay:function(result){
-
+                document.querySelector("#spinner").style.cssText = "visibility:hidden;";
+                const responseArea = document.createElement("div");
+                responseArea.innerHTML = `
+                                <div class="d-flex justify-content-between">
+                                    <p class="small mb-1 text-muted">`+new Date().toLocaleTimeString('ko-kr')+`</p>
+                                    <p class="small mb-1">Chatbot</p>
+                                </div>
+                                <div class="d-flex flex-row justify-content-end mb-4 pt-1">
+                                    <div class="small p-2 me-3 mb-3 rounded-3 bg-info" style="overflow: auto">
+                                        <pre class="text-white" style="font-weight: bold">`+result+`</pre>
+                                    </div>
+                                    <img src="/imgs/chatbot.png"
+                                         alt="Chat Bot" style="width: 45px; height: 100%;">
+                                </div>
+                            `;
+                document.querySelector('#result').prepend(responseArea);
             }
         }
         window.onload = function(){
