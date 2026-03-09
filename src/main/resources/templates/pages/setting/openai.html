@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+
+<th:block>
+
+    <h2>OpenAI Setting</h2><br>
+    <h4>1. Key 발급</h4><br>
+    <a href="https://platform.openai.com/" target="_blank">OpenAI Key 발습사이트 접속</a><br><br>
+    <p>1) login 후 상단 톱니 모양의 설정 클릭</p>
+    <p>2) API Keys 선택 Create New Security Key 선택 후 발급: 이때 프로젝트는 default project, permission은 All</p>
+    <img th:src="@{/imgs/openai2.png}" width="600px;"><br><br>
+    <p>2) Billings  선택 - Payment methods 선택 후 카드 등록, Add to credit balance 선택 후 금액 결재, 반드시 Auto recharge is off로 설정</p>
+    <img th:src="@{/imgs/openai3.png}" width="600px;"><br><br>
+    <h4>2. OpenAI Documentation</h4><br>
+    <a href="https://platform.openai.com/docs/overview" target="_blank">OpenAI Documentation</a><br><br>
+    <h4>3. Spring Boot Project에 Key 정보 입력</h4><br>
+    <p>.env 파일 생성 후 키값 입력, 반드시 Git 연동 시 .gitignore에 등록</p>
+    <img th:src="@{/imgs/env.png}" width="600px;"><br><br>
+    <pre style="border:1px solid cornflowerblue">
+OPEN_AI_KEY=sk-proj-TcdDCv
+GEMINI_KEY=AIzaSyDkpW5sh1I</pre>
+    <p>.env 파일을 spring boot 프로젝트가 인식 할 수 있도록 yml 파일에 내용 추가</p>
+    <pre style="border:1px solid cornflowerblue">
+
+spring:
+  config:
+    import: optional:file:.env[.properties]
+    </pre><br><br>
+
+</th:block>
+
+</html>

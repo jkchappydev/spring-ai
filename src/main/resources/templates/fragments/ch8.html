@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+
+<th:block>
+
+    <h1>Chapter 8. RAG (Retrieval-Augmented Generation)</h1><br>
+
+    <h2>1. RAG(Retrieval-Augmented Generation)</h2>
+
+    <p>
+        RAG는 대규모 언어 모델(LLM)이 장문 처리, 사실적 정확성, 외부 지식 인식 등에서 갖는 한계를 보완하기 위해 고안된 기술입니다.
+        검색된 관련 데이터를 프롬프트에 결합하여 보다 정확하고 신뢰도 높은 응답을 생성할 수 있도록 설계된 방식입니다.
+    </p>
+    <img th:src="@{/imgs/rag2.png}" width="600px;"><br><a href="https://docs.spring.io/spring-ai/reference/api/tools.html">출처:docs.springai.io</a><br><br>
+
+    <p>
+        이 접근 방식은 일반적으로 ETL(Extract-Transform-Load) 파이프라인 패턴을 따릅니다.
+        즉, 비정형 문서 데이터를 읽어 변환하고 벡터 데이터베이스에 저장하는 처리 단계를 의미합니다.
+        벡터 데이터베이스는 RAG의 “검색(Retrieval)” 단계에서 핵심적으로 활용됩니다.
+    </p>
+
+    <h3>문서 Chunking(조각 나누기)의 두 가지 핵심 기준</h3>
+    <p>
+        1) <strong>의미적 경계 보존</strong> — 단락, 표, 코드 블록 등 의미 단위가 끊기지 않도록 문서를 분할합니다.
+        <br>
+        2) <strong>토큰 제한에 맞춘 세분화</strong> — AI 모델의 토큰 제한에 대응할 수 있도록 작은 크기로 재조각화합니다.
+    </p>
+
+    <p>
+        Spring AI는 Advisor API를 통해 커스텀 RAG 플로우와 기본 RAG 플로우를 모두 지원하는 모듈형 아키텍처를 제공합니다.
+    </p>
+
+    <p>
+        사용자 질문이 들어오면 AI 모델은 벡터 데이터베이스에서 관련 문서를 검색하여 프롬프트에 포함시키며,
+        이를 통해 보다 최적화된 응답을 생성합니다.
+    </p>
+
+    <hr>
+
+    <h2>2. ETL 파이프라인</h2>
+    <p>
+        ETL = Extract · Transform · Load<br>
+        1️⃣ 추출(Extract) — 여러 시스템에서 데이터 가져오기<br>
+        2️⃣ 변환(Transform) — 정제/표준화/품질 개선<br>
+        3️⃣ 적재(Load) — 분석 가능한 저장소로 전달<br>
+    </p>
+    <p>
+        ETL 파이프라인은 RAG 구현에서 데이터 흐름을 정교하게 관리하는 핵심 구성 요소입니다.
+        원본 데이터(문서, PDF, 웹 페이지 등)에서 텍스트와 메타데이터를 추출한 뒤,
+        벡터 임베딩을 생성하고 이를 구조화된 Vector Store에 저장하는 과정을 담당합니다.
+    </p>
+    <img th:src="@{/imgs/etl.png}" width="600px;"><br><a href="https://docs.spring.io/spring-ai/reference/api/etl-pipeline.html">출처:docs.springai.io</a><br><br>
+
+    <p>
+        Spring AI의 Document 클래스는 텍스트, 메타데이터뿐 아니라 필요 시 이미지, 오디오 등의 미디어 타입도 지원합니다.
+        ETL 과정에서는 다양한 Document Reader(PDF, Tika, Jsoup 등)를 활용해 데이터를 구조화합니다.
+    </p>
+
+    <hr>
+
+    <h2>3. Advisor 기반 RAG 구현</h2>
+
+    <p>
+        Spring AI는 RAG 구현을 간소화하기 위해 다양한 Advisor를 제공합니다.
+        대표적으로 <strong>QuestionAnswerAdvisor</strong>와 <strong>VectorStoreChatMemoryAdvisor</strong> 등이 있습니다.
+    </p>
+
+    <p>
+        다음은 RAG를 위한 Spring Boot 의존성 구성 예시입니다.</p>
+
+    <pre style="border:1px solid cornflowerblue">
+
+        implementation 'org.springframework.ai:spring-ai-rag'
+        implementation 'org.springframework.ai:spring-ai-advisors-vector-store'
+
+        implementation 'org.springframework.ai:spring-ai-pdf-document-reader'
+        implementation 'org.springframework.ai:spring-ai-tika-document-reader'
+        implementation 'org.springframework.ai:spring-ai-jsoup-document-reader'
+    </pre><br>
+
+    <hr>
+
+    <h2>4. QuestionAnswerAdvisor</h2>
+
+    <p>
+        벡터 데이터베이스는 LLM이 기본적으로 알 수 없는 외부 지식을 저장하는 역할을 합니다.
+        <strong>QuestionAnswerAdvisor</strong>는 사용자의 질문을 받아 벡터 스토어에서 연관된 문서를 검색하고,
+        검색 결과를 프롬프트에 포함시켜 모델이 사실 기반 응답을 생성하도록 돕습니다.
+    </p>
+
+    <hr>
+
+    <h2>5. RetrievalAugmentationAdvisor</h2>
+
+    <p>
+        Spring AI의 RAG 모듈은 <strong>RetrievalAugmentationAdvisor</strong>를 통해
+        가장 전형적인 RAG 플로우를 즉시 구현할 수 있도록 설계되었습니다.
+    </p>
+
+    <p>
+        기본 설정에서는 “검색된 컨텍스트가 비어 있을 경우 모델이 응답하지 않도록” 되어 있으며,
+        설정 변경으로 빈 검색을 허용할 수도 있습니다.
+    </p>
+
+    <hr>
+
+    <h2>6. Query Transformation</h2>
+
+    <h3>CompressionQueryTransformer</h3>
+    <p>
+        대화 기록을 압축하여 핵심 의미만 추출한 독립 쿼리로 재구성합니다.
+        대화 맥락이 길거나 후속 질문이 문맥에 의존하는 경우 유용합니다.
+    </p>
+
+    <h3>RewriteQueryTransformer</h3>
+    <p>
+        사용자의 원문 질문을 더 검색 친화적 형태로 재작성합니다.
+        장황하거나 모호한 쿼리일수록 효과가 큽니다.
+    </p>
+
+    <h3>TranslationQueryTransformer</h3>
+    <p>
+        문서 임베딩 모델이 학습된 언어에 맞게 질문을 자동 번역합니다.
+        이미 동일한 언어일 경우 변환 없이 그대로 반환합니다.
+    </p>
+
+    <hr>
+
+    <h2>7. Query Expansion</h2>
+
+    <h3>MultiQueryExpander</h3>
+    <p>
+        하나의 질문을 여러 의미적 변형으로 확장하여 다양한 관점으로 검색을 수행합니다.
+        이를 통해 더 많은 관련 문맥을 찾고 검색 품질을 극대화할 수 있습니다.
+    </p>
+
+</th:block>
+
+</html>

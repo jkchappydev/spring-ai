@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+
+<th:block>
+
+    <h2>PostregSQL Setting</h2><br>
+    <h4>1. Docker 설치 </h4><br>
+    <a href="https://docs.docker.com/get-started/get-docker/"  target="_blank">Docker Download</a><br><br>
+    <h4>2. PostgreSQL Image Download </h4>
+    <pre style="border:1px solid cornflowerblue">
+
+    docker run -d --name pgvector-container -e POSTGRES_USER=user01 -e POSTGRES_PASSWORD=111111 -e POSTGRES_DB=springai -p 5432:5432 pgvector/pgvector:pg17
+    </pre><br>
+    <h4>3. PostregSQL Server Start : Containers - start button</h4><br>
+    <p>위와 같이 설치 한 이후에는 Docker Desktop 실행 후 Containers에서 Actions 아래 버튼으로 시작 또는 중지</p>
+    <p>실행 시 문제 발생 시 Containers에서 삭제, Images에서도 삭제 후 2번 설치 다시 진행</p>
+    <img th:src="@{/imgs/docker.png}" width="600px;"><br><br>
+    <h4>4. PostregSQL & Intellij Integration</h4><br>
+    <p>intellij 우측에 DB모양 아이콘 클릭 후 Data Source에서 PostregSQL 선택</p>
+    <img th:src="@{/imgs/postgre1.png}" width="600px;"><br><br>
+    <p>PostregSQL 접속 id(user01)와 password(111111) 입력</p>
+    <img th:src="@{/imgs/postgre2.png}" width="600px;"><br><br>
+    <p>JDBC Driver 설치</p>
+    <img th:src="@{/imgs/postgre3.png}" width="600px;"><br><br>
+    <p>PostregSQL 접속 완료</p>
+    <img th:src="@{/imgs/postgre4.png}" width="600px;"><br><br><br>
+
+
+</th:block>
+
+</html>

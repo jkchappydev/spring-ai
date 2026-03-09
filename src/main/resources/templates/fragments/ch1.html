@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+
+<th:block>
+    <h1>Chapter 1. Chat Completion</h1><br>
+    <p class="meta">Spring AI 기반 Chat Model API의 개요와 프롬프트 엔지니어링, 메모리 설계에 대한 기술 문서(한국어)</p>
+
+
+    <h2>1. Chat Completion 개요</h2><br>
+    <img th:src="@{/imgs/chat.png}" width="600px;"><br><a href="https://docs.spring.io/spring-ai/reference/index.html">출처:docs.springai.io</a><br><br>
+
+    <p class="lead"><strong>Chat Model API</strong>는 애플리케이션에 AI 기반의 대화 완성 기능을 통합하기 위한 API입니다. GPT(Generative Pre-trained Transformer)와 같은 <strong>사전 학습 언어 모델</strong>을 이용해 사용자 입력을 해석하고 자연어 응답을 생성합니다.</p>
+    <p>일반적인 동작은 입력된 <code>프롬프트(prompt)</code> 또는 기존 대화 기록을 모델에 전달하면, 모델이 학습된 패턴과 문맥 이해를 활용해 응답을 생성하고 이를 애플리케이션으로 반환하는 방식입니다. 반환된 응답은 UI 표시에 사용되거나 추가 처리에 활용됩니다.</p>
+
+
+    <p>Spring AI의 Chat Model API는 여러 AI 모델과 호환되는 <em>포터블 인터페이스</em>을 제공하여 최소한의 코드 변경으로 모델 교체가 가능하도록 설계되어 있습니다. 이는 Spring의 모듈성 및 상호 교환성 철학을 계승합니다.</p>
+
+
+    <p>또한 <code>Prompt</code> 클래스(입력 캡슐화)와 <code>ChatResponse</code> 클래스(출력 표준화)를 제공해, 프롬프트 생성, 옵션 관리, 응답 파싱 등의 복잡성을 숨기고 단순화된 개발 경험을 지원합니다.</p>
+
+    <hr>
+
+    <h2>2. Chat Flow — Spring AI 처리 흐름</h2>
+    <p>Spring AI는 시작 시점(start-up) 구성과 실행 시점(runtime) 구성을 병합하여 Chat 모델을 초기화하고 요청을 처리합니다. 주요 단계는 다음과 같습니다.</p>
+    <img th:src="@{/imgs/chatprocess.png}" width="600px;"><br><a href="https://docs.spring.io/spring-ai/reference/api/chatmodel.html">출처:docs.springai.io</a><br><br>
+
+
+    <ol>
+        <li><strong>Start-up Configuration</strong> — <code>ChatModel</code> 또는 <code>StreamingChatModel</code>이 시작 옵션(start options)으로 초기화됩니다. 기본 동작 및 전역 설정을 정의합니다.</li>
+        <li><strong>Runtime Configuration</strong> — 각 요청에 대해 런타임 옵션(runtime options)을 함께 전달할 수 있으며, 필요 시 시작 옵션을 재정의합니다.</li>
+        <li><strong>Option Merging</strong> — 시작 옵션과 런타임 옵션을 병합합니다. 런타임 옵션이 존재하면 우선 적용됩니다.</li>
+        <li><strong>Input Processing</strong> — 입력된 프롬프트를 모델별 포맷으로 변환합니다.</li>
+        <li><strong>Output Processing</strong> — 모델의 응답을 <code>ChatResponse</code> 구조로 표준화하여 애플리케이션이 일관되게 소비하도록 합니다.</li>
+    </ol>
+    <img th:src="@{/imgs/model.png}" width="600px;"><br><a href="https://docs.spring.io/spring-ai/reference/api/index.html">출처:docs.springai.io</a><br><br>
+
+    <hr>
+
+    <h2>3. Prompt Engineering</h2>
+    <span><a href="https://www.promptingguide.ai/">promptingguide 참고</a></span>
+    <p class="lead">프롬프트 엔지니어링은 생성형 AI가 의도에 맞는 결과를 생성하도록 입력을 설계하는 기술입니다. 맥락을 명확히 하고 모호성을 줄여 모델의 응답 정확성을 개선하는 데 목적이 있습니다.</p>
+
+
+    <h3>주요 기법</h3>
+    <ul>
+        <li><strong>Zero-Shot Prompting</strong> — 예시 없이 작업을 직접 수행하도록 요청하는 방식. 예시 한 개를 제공하면 One-Shot Prompting.</li>
+        <li><strong>Few-Shot Prompting</strong> — 여러 예시를 제공해 모델이 요구되는 패턴을 학습하도록 유도.</li>
+        <li><strong>Chain-of-Thought Prompting</strong> — 모델이 문제 해결 시 중간 추론 과정을 단계별로 설명하도록 유도하여 더 정확한 추론을 얻는 기법.</li>
+        <li><strong>RAG (Retrieval Augmented Generation)</strong> — 외부 데이터 소스에서 실시간으로 정보를 검색해 최신성 및 도메인 특화성을 확보한 후 답변을 생성하는 방식.</li>
+    </ul>
+
+    <hr>
+
+    <h2>4. Chat Memory</h2>
+    <p>대규모 언어 모델(LLM)은 기본적으로 <strong>상태 비저장(stateless)</strong> 구조입니다. 즉, 모델 자체는 이전 상호작용을 자동으로 기억하지 않습니다. 이를 보완하기 위해 Spring AI는 <strong>Chat Memory</strong> 기능을 제공합니다.</p>
+
+
+    <ul>
+        <li>대화 이력은 메모리 또는 영속 저장소(DB)에 저장됩니다.</li>
+        <li>이후 요청에서 이전 맥락을 불러와 문맥을 유지할 수 있습니다.</li>
+        <li>대화형 AI의 사용자 경험 및 품질 개선에 핵심적인 구성 요소입니다.</li>
+    </ul>
+</th:block>
+
+</html>

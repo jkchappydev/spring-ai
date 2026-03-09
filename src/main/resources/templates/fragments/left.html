@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<!-- fragment/left.html -->
+
+<th:block th:fragment="left(page)">
+
+    <!-- Main Left Menu -->
+    <ul th:if="${page == 'main' || page == 'setting' }" class="nav nav-pills flex-column" style="font-weight: bold">
+
+        <li class="nav-item">
+            <a th:href="@{/go/ch1}" class="btn btn-secondary btn-block mb-2" role="button" style="font-weight: bold;text-align: left">
+                1. Chat Completion
+            </a>
+        </li>
+        <li class="nav-item">
+            <a th:href="@{/go/ch2}" class="btn btn-secondary btn-block mb-2" role="button" style="font-weight: bold;text-align: left">
+                2. Prompt Template
+            </a>
+        </li>
+        <li class="nav-item">
+            <a th:href="@{/go/ch3}" class="btn btn-secondary btn-block mb-2" role="button" style="font-weight: bold;text-align: left">
+                3. Advisors API
+            </a>
+        </li>
+        <li class="nav-item">
+            <a th:href="@{/go/ch4}" class="btn btn-secondary btn-block mb-2" role="button" style="font-weight: bold;text-align: left">
+                4. Images and Vision
+            </a>
+        </li>
+        <li class="nav-item">
+            <a th:href="@{/go/ch5}" class="btn btn-secondary btn-block mb-2" role="button" style="font-weight: bold;text-align: left">
+                5. Audio and Speech
+            </a>
+        </li>
+        <li class="nav-item">
+            <a th:href="@{/go/ch6}" class="btn btn-secondary btn-block mb-2" role="button" style="font-weight: bold;text-align: left">
+                6. Tool Calling
+            </a>
+        </li>
+        <li class="nav-item">
+            <a th:href="@{/go/ch7}" class="btn btn-secondary btn-block mb-2" role="button" style="font-weight: bold;text-align: left">
+                7. Embedding Model
+            </a>
+        </li>
+        <li class="nav-item">
+            <a th:href="@{/go/ch8}" class="btn btn-secondary btn-block mb-2" role="button" style="font-weight: bold;text-align: left">
+                8. RAG
+            </a>
+        </li>
+        <li class="nav-item">
+            <a th:href="@{/go/ch9}" class="btn btn-secondary btn-block mb-2" role="button" style="font-weight: bold;text-align: left">
+                9. MCP
+            </a>
+        </li>
+    </ul>
+    <!-- Chapter1 Left Menu -->
+    <ul th:if="${page == 'ch1'}" class="nav nav-pills flex-column" style="font-weight: bold">
+        <li class="nav-item">
+            <a th:href="@{/go/ch1/desc}" class="btn btn-warning btn-block mb-2" role="button" style="font-weight: bold;text-align: left; font-size: small">
+                Chapter1. Screen Description
+            </a>
+        </li>
+        <li class="nav-item">
+            <a th:href="@{/go/ch1/1_chat}" class="btn btn-primary btn-block mb-2" role="button" style="font-weight: bold;text-align: left; font-size: small">
+                1. Chat (Zero-Shot Prompting)
+            </a>
+        </li>
+        <li class="nav-item">
+            <a th:href="@{/go/ch1/2_chat_stream}" class="btn btn-primary btn-block mb-2" role="button" style="font-weight: bold;text-align: left; font-size: small">
+                2. Chat Stream
+            </a>
+        </li>
+        <li class="nav-item">
+            <a th:href="@{/go/ch1/3_chat_few_shot}" class="btn btn-primary btn-block mb-2" role="button" style="font-weight: bold;text-align: left; font-size: small">
+                3. Chat (Few-Shot Prompting)
+            </a>
+        </li>
+        <li class="nav-item">
+            <a th:href="@{/go/ch1/4_chat_chain_of_thought}" class="btn btn-primary btn-block mb-2" role="button" style="font-weight: bold;text-align: left; font-size: small">
+                4. Chat (Chain-of-Thought Prompting)
+            </a>
+        </li>
+        <li class="nav-item">
+            <a th:href="@{/go/ch1/5_chat_memory}" class="btn btn-primary btn-block mb-2" role="button" style="font-weight: bold;text-align: left; font-size: small">
+                5. Chat Memory
+            </a>
+        </li>
+
+
+    </ul>
+
+    <!-- Chapter3 Left Menu -->
+    <ul th:if="${page == 'ch2'}" class="nav nav-pills flex-column" style="font-weight: bold">
+        <li class="nav-item">
+            <a th:href="@{/go/ch2/desc}" class="btn btn-warning btn-block mb-2" role="button" style="font-weight: bold;text-align: left; font-size: small">
+                Chapter2. Screen Description
+            </a>
+        </li>
+        <li class="nav-item">
+            <a th:href="@{/go/ch2/1_prompt_template}" class="btn btn-primary btn-block mb-2" role="button" style="font-weight: bold;text-align: left; font-size: small">
+                1. Prompt Template
+            </a>
+        </li>
+        <li class="nav-item">
+            <a th:href="@{/go/ch2/2_list_output}" class="btn btn-primary btn-block mb-2" role="button" style="font-weight: bold;text-align: left; font-size: small">
+                2. ListOutputConverter
+            </a>
+        </li>
+        <li class="nav-item">
+            <a th:href="@{/go/ch2/3_map_output}" class="btn btn-primary btn-block mb-2" role="button" style="font-weight: bold;text-align: left; font-size: small">
+                3. MapOutputConverter
+            </a>
+        </li>
+        <li class="nav-item">
+            <a th:href="@{/go/ch2/4_bean_output}" class="btn btn-primary btn-block mb-2" role="button" style="font-weight: bold;text-align: left; font-size: small">
+                4. BeanOutputConverter
+            </a>
+        </li>
+        <li class="nav-item">
+            <a th:href="@{/go/ch2/5_parameterized_type_reference}" class="btn btn-primary btn-block mb-2" role="button" style="font-weight: bold;text-align: left; font-size: small">
+                5. ParameterizedType
+            </a>
+        </li>
+    </ul>
+    <!-- Chapter3 Left Menu -->
+    <ul th:if="${page == 'ch3'}" class="nav nav-pills flex-column" style="font-weight: bold">
+        <li class="nav-item">
+            <a th:href="@{/go/ch3/desc}" class="btn btn-warning btn-block mb-2" role="button" style="font-weight: bold;text-align: left; font-size: small">
+                Chapter3. Screen Description
+            </a>
+        </li>
+        <li class="nav-item">
+            <a th:href="@{/go/ch3/1_advisor}" class="btn btn-primary btn-block mb-2" role="button" style="font-weight: bold;text-align: left; font-size: small">
+                1. Advisor
+            </a>
+        </li>
+        <li class="nav-item">
+            <a th:href="@{/go/ch3/2_advisor_stream}" class="btn btn-primary btn-block mb-2" role="button" style="font-weight: bold;text-align: left; font-size: small">
+                2. Advisor: Stream
+            </a>
+        </li>
+        <li class="nav-item">
+            <a th:href="@{/go/ch3/3_recursive_advisors}" class="btn btn-primary btn-block mb-2" role="button" style="font-weight: bold;text-align: left; font-size: small">
+                3. Recursive Advisors
+            </a>
+        </li>
+    </ul>
+    <!-- Chapter4 Left Menu -->
+    <ul th:if="${page == 'ch4'}" class="nav nav-pills flex-column" style="font-weight: bold">
+        <li class="nav-item">
+            <a th:href="@{/go/ch4/desc}" class="btn btn-warning btn-block mb-2" role="button" style="font-weight: bold;text-align: left; font-size: small">
+                Chapter4. Screen Description
+            </a>
+        </li>
+        <li class="nav-item">
+            <a th:href="@{/go/ch4/1_generate_image_url}" class="btn btn-primary btn-block mb-2" role="button" style="font-weight: bold;text-align: left; font-size: small">
+                1. Generate Image for URL
+            </a>
+        </li>
+        <li class="nav-item">
+            <a th:href="@{/go/ch4/2_generate_image}" class="btn btn-primary btn-block mb-2" role="button" style="font-weight: bold;text-align: left; font-size: small">
+                2. Generate Image
+            </a>
+        </li>
+        <li class="nav-item">
+            <a th:href="@{/go/ch4/3_image_analysis}" class="btn btn-primary btn-block mb-2" role="button" style="font-weight: bold;text-align: left; font-size: small">
+                3. Image Analysis
+            </a>
+        </li>
+        <li class="nav-item">
+            <a th:href="@{/go/ch4/4_video_analysis}" class="btn btn-primary btn-block mb-2" role="button" style="font-weight: bold;text-align: left; font-size: small">
+                4. Video Analysis
+            </a>
+        </li>
+    </ul>
+    <!-- Chapter5 Left Menu -->
+    <ul  th:if="${page == 'ch5'}" class="nav nav-pills flex-column" style="font-weight: bold">
+        <li class="nav-item">
+            <a th:href="@{/go/ch5/desc}" class="btn btn-warning btn-block mb-2" role="button" style="font-weight: bold;text-align: left; font-size: small">
+                Chapter5. Screen Description
+            </a>
+        </li>
+        <li class="nav-item">
+            <a th:href="@{/go/ch5/1_text_to_speech}" class="btn btn-primary btn-block mb-2" role="button" style="font-weight: bold;text-align: left; font-size: small">
+                1. Text to Speech
+            </a>
+        </li>
+        <li class="nav-item">
+            <a th:href="@{/go/ch5/2_text_to_speech_chat}" class="btn btn-primary btn-block mb-2" role="button" style="font-weight: bold;text-align: left; font-size: small">
+                2. Text to Speech: Chat
+            </a>
+        </li>
+        <li class="nav-item">
+            <a th:href="@{/go/ch5/3_text_to_speech_chat_stream}" class="btn btn-primary btn-block mb-2" role="button" style="font-weight: bold;text-align: left; font-size: small">
+                3. Text to Speech: Chat Stream
+            </a>
+        </li>
+        <li class="nav-item">
+            <a th:href="@{/go/ch5/4_speech_to_text}" class="btn btn-primary btn-block mb-2" role="button" style="font-weight: bold;text-align: left; font-size: small">
+                4. Speech to Text
+            </a>
+        </li>
+        <li class="nav-item">
+            <a th:href="@{/go/ch5/5_speech_to_text_chat}" class="btn btn-primary btn-block mb-2" role="button" style="font-weight: bold;text-align: left; font-size: small">
+                5. Speech to Text: Chat
+            </a>
+        </li>
+        <li class="nav-item">
+            <a th:href="@{/go/ch5/6_speech_to_text_chat_voice}" class="btn btn-primary btn-block mb-2" role="button" style="font-weight: bold;text-align: left; font-size: small">
+                6. Speech to Text: Chat Voice
+            </a>
+        </li>
+    </ul>
+    <!-- Chapter6 Left Menu -->
+    <ul th:if="${page == 'ch6'}" class="nav nav-pills flex-column" style="font-weight: bold">
+        <li class="nav-item">
+            <a th:href="@{/go/ch6/desc}" class="btn btn-warning btn-block mb-2" role="button" style="font-weight: bold;text-align: left; font-size: small">
+                Chapter6. Screen Description
+            </a>
+        </li>
+        <li class="nav-item">
+            <a th:href="@{/go/ch6/1_date_time}" class="btn btn-primary btn-block mb-2" role="button" style="font-weight: bold;text-align: left; font-size: small">
+                1. Date Time
+            </a>
+        </li>
+        <li class="nav-item">
+            <a th:href="@{/go/ch6/2_customer_inquiry}" class="btn btn-primary btn-block mb-2" role="button" style="font-weight: bold;text-align: left; font-size: small">
+                2. Customer Inquiry
+            </a>
+        </li>
+        <li class="nav-item">
+            <a th:href="@{/go/ch6/3_recommendation}" class="btn btn-primary btn-block mb-2" role="button" style="font-weight: bold;text-align: left; font-size: small">
+                3. Recommendation
+            </a>
+        </li>
+        <li class="nav-item">
+            <a th:href="@{/go/ch6/4_access_system}" class="btn btn-primary btn-block mb-2" role="button" style="font-weight: bold;text-align: left; font-size: small">
+                4. Access System
+            </a>
+        </li>
+    </ul>
+    <!-- Chapter7 Left Menu -->
+    <ul th:if="${page == 'ch7'}" class="nav nav-pills flex-column" style="font-weight: bold">
+        <li class="nav-item">
+            <a th:href="@{/go/ch7/desc}" class="btn btn-warning btn-block mb-2" role="button" style="font-weight: bold;text-align: left; font-size: small">
+                Chapter7. Screen Description
+            </a>
+        </li>
+        <li class="nav-item">
+            <a th:href="@{/go/ch7/1_text_embedding}" class="btn btn-primary btn-block mb-2" role="button" style="font-weight: bold;text-align: left; font-size: small">
+                1. Text Embedding
+            </a>
+        </li>
+        <li class="nav-item">
+            <a th:href="@{/go/ch7/2_hotel_embedding}" class="btn btn-primary btn-block mb-2" role="button" style="font-weight: bold;text-align: left; font-size: small">
+                2. Hotel Data Embedding
+            </a>
+        </li>
+        <li class="nav-item">
+            <a th:href="@{/go/ch7/3_chat_pgvector}" class="btn btn-primary btn-block mb-2" role="button" style="font-weight: bold;text-align: left; font-size: small">
+                3. Chat Memory PGvector
+            </a>
+        </li>
+        <li class="nav-item">
+            <a th:href="@{/go/ch7/4_chat_jdbc}" class="btn btn-primary btn-block mb-2" role="button" style="font-weight: bold;text-align: left; font-size: small">
+                4. Chat Memory JDBC
+            </a>
+        </li>
+    </ul>
+    <!-- Chapter8 Left Menu -->
+    <ul th:if="${page == 'ch8'}" class="nav nav-pills flex-column" style="font-weight: bold">
+        <li class="nav-item">
+            <a th:href="@{/go/ch8/desc}" class="btn btn-warning btn-block mb-2" role="button" style="font-weight: bold;text-align: left; font-size: small">
+                Chapter8. Screen Description
+            </a>
+        </li>
+        <li class="nav-item">
+            <a th:href="@{/go/ch8/1_etl_pipeline}" class="btn btn-primary btn-block mb-2" role="button" style="font-weight: bold;text-align: left; font-size: small">
+                1. ETL Pipeline
+          </a>
+        </li>
+        <li class="nav-item">
+            <a th:href="@{/go/ch8/2_rag_chat}" class="btn btn-primary btn-block mb-2" role="button" style="font-weight: bold;text-align: left; font-size: small">
+                2. RAG Chat
+            </a>
+        </li>
+        <li class="nav-item">
+            <a th:href="@{/go/ch8/3_rag_chat_prompt_template}" class="btn btn-primary btn-block mb-2" role="button" style="font-weight: bold;text-align: left; font-size: small">
+                3. RAG Chat: template
+            </a>
+        </li>
+        <li class="nav-item">
+            <a th:href="@{/go/ch8/4_raa_rag_chat}" class="btn btn-primary btn-block mb-2" role="button" style="font-weight: bold;text-align: left; font-size: small">
+                4. Retrieval Augmentation Advisor
+            </a>
+        </li>
+        <li class="nav-item">
+            <a th:href="@{/go/ch8/5_cqt_rag_chat}" class="btn btn-primary btn-block mb-2" role="button" style="font-weight: bold;text-align: left; font-size: small">
+                5. Compression Query Transformer
+            </a>
+        </li>
+        <li class="nav-item">
+            <a th:href="@{/go/ch8/6_rqt_rag_chat}" class="btn btn-primary btn-block mb-2" role="button" style="font-weight: bold;text-align: left; font-size: small">
+                6. Rewrite Query Transformer
+            </a>
+        </li>
+        <li class="nav-item">
+            <a th:href="@{/go/ch8/7_tqt_rag_chat}" class="btn btn-primary btn-block mb-2" role="button" style="font-weight: bold;text-align: left; font-size: small">
+                7. Translation Query Transformer
+            </a>
+        </li>
+        <li class="nav-item">
+            <a th:href="@{/go/ch8/8_mqe_rag_chat}" class="btn btn-primary btn-block mb-2" role="button" style="font-weight: bold;text-align: left; font-size: small">
+                8. Multi Query Expander
+            </a>
+        </li>
+    </ul>
+    <!-- Chapter9 Left Menu -->
+    <ul th:if="${page == 'ch9'}" class="nav nav-pills flex-column" style="font-weight: bold">
+
+        <li class="nav-item">
+            <a th:href="@{/go/ch9/desc}" class="btn btn-warning btn-block mb-2" role="button" style="font-weight: bold;text-align: left; font-size: small">
+                Chapter9. Screen Description
+            </a>
+        </li>
+        <li class="nav-item">
+            <a th:href="@{/go/ch9/1_mcp_chat}" class="btn btn-primary btn-block mb-2" role="button" style="font-weight: bold;text-align: left; font-size: small">
+                1. MCP Chat
+            </a>
+        </li>
+        <li class="nav-item">
+            <a th:href="@{/go/ch9/2_mcp_access}" class="btn btn-primary btn-block mb-2" role="button" style="font-weight: bold;text-align: left; font-size: small">
+                2. MCP Access
+            </a>
+        </li>
+
+    </ul>
+</th:block>
+
+</html>
+

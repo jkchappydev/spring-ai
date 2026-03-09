@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+
+<th:block>
+    <h4>2. Prompt Template & Structured Output Converter</h4>
+    <br>
+    <table class="table table-bordered">
+        <thead>
+        <tr>
+            <th>File Name</th>
+            <th>Description</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+            <td>  1. Prompt Template</td>
+            <td>Prompt Template은 사용자가 입력한 자연어 문장, 간단한 명령, 파라미터 등을 기반으로
+                구조화된 프롬프트(Prompt String) 를 동적으로 생성하는 기능입니다.
+                Spring AI는 템플릿 변수 바인딩을 통해 안정적이고 재사용 가능한 Prompt를 만들 수 있도록 지원합니다.</td>
+        </tr>
+        <tr>
+            <td>  2. ListOutputConverter</td>
+            <td>LLM이 “쉼표로 구분된 리스트” 형태의 문자열을 반환할 때,
+                이를 Java의 List&lt;String&gt; 또는 기타 List 타입으로 파싱하는 Output Converter입니다.</td>
+        </tr>
+        <tr>
+            <td>3. MapOutputConverter</td>
+            <td>LLM이 Key–Value 기반의 구조적 응답을 하도록 유도하고 JSON-like Key/Value 응답을 파싱,
+                해당 응답을 Java의 Map&lt;String, Object&gt; 형태로 변환하는 Converter입니다.</td>
+        </tr>
+        <tr>
+            <td> 4. BeanOutputConverter</td>
+            <td>지정된 Java 클래스(POJO)를 기반으로 LLM이 JSON 응답을 생성하도록 하고,
+                그 JSON을 지정된 Java Bean 객체로 변환하는 Converter입니다.</td>
+        </tr>
+        <tr>
+            <td>5. ParameterizedType</td>
+            <td>BeanOutputConverter보다 더 복잡하거나 제네릭 기반의 구조적 타입을 변환할 때 사용하는 방식입니다.
+                예를 들어 List&lt;UserInfo&gt;, Map&lt;String, List&lt;Item&gt;&gt; 같은 복잡한 타입을 안전하게 파싱할 수 있습니다.</td>
+        </tr>
+        </tbody>
+    </table>
+
+</th:block>
+
+</html>

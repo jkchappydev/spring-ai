@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+
+<th:block>
+    <h4>6. Tool Calling</h4>
+    <br>
+    <table class="table table-bordered">
+        <thead>
+        <tr>
+            <th>File Name</th>
+            <th>Description</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+            <td> 1. Date Time</td>
+            <td>다양한 Tools를 이용하여 LLM과 소통 합니다.
+                <ul>
+                    <li>DateTimeTools: 현재 시간 데이터를 만들어 줍니다.</li>
+                    <li>CurrentWeatherTools: 현재 날씨 데이터를 경도와 위도를 기반으로 만들어 줍니다.</li>
+                    <li>ForecastWeatherTools: 앞으로 5일간의 날씨 예보를 정보를 경도와 위도를 기반으로 만들어 줍니다.</li>
+                </ul>
+            </td>
+        </tr>
+        <tr>
+            <td> 2. Customer Inquiry</td>
+            <td>고객 정보를 Tool을 이용해서 LLM과 연동 하여 조회 합니다. ToolCallResultConverter
+                <ul>
+                    <li>CustomerTools: 고객정보를 Customer 객체 타입을 기반으로 JSON 형식으로 리턴 합니다.</li>
+                    <li>CustomerStringTools: 고객정보를 Customer 객체 타입을 기반으로 String 형식으로 리턴 합니다.</li>
+                    <li>CustomerToolCallResultConverter: Tool에서 만들어진 데이터를 JSON 또는 String으로 변환해 줍니다.</li>
+                </ul>
+            </td>
+        </tr>
+        <tr>
+            <td>3. Recommendation</td>
+            <td>ToolContext를 이용하여 특정 ID를 기반으로 고객의 구매 목록을 기반으로 제품에 대한 추천 시스템 입니다.</td>
+        </tr>
+        <tr>
+            <td> 4. Access System</td>
+            <td>카메라를 통해 사원증을 인식 하여 사원증에 있는 ID Number를 기반으로 출업 허가 하는 시스템 입니다.</td>
+        </tr>
+        </tbody>
+    </table>
+
+</th:block>
+
+</html>

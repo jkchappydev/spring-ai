@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+
+<th:block>
+
+    <h2>Spring AI Setting</h2><br>
+    <a href="https://docs.spring.io/spring-ai/reference/index.html" target="_blank">Spring AI Documentation</a><br><br>
+    <h4>1. build.gradle </h4>
+    <pre style="border:1px solid cornflowerblue">
+
+plugins {
+    id 'java'
+    id 'org.springframework.boot' version '3.5.8'
+    id 'io.spring.dependency-management' version '1.1.7'
+}
+
+group = 'com.ai'
+version = '0.0.1-SNAPSHOT'
+description = 'edu'
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(17)
+    }
+}
+
+configurations {
+    compileOnly {
+        extendsFrom annotationProcessor
+    }
+}
+
+repositories {
+    mavenCentral()
+}
+
+ext {
+    set('springAiVersion', "1.1.2")
+}
+
+dependencies {
+    implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    compileOnly 'org.projectlombok:lombok'
+    developmentOnly 'org.springframework.boot:spring-boot-devtools'
+    runtimeOnly 'org.postgresql:postgresql'
+    annotationProcessor 'org.projectlombok:lombok'
+
+    // spring-ai-openai
+    implementation 'org.springframework.ai:spring-ai-openai'
+    implementation 'org.springframework.ai:spring-ai-starter-model-openai'
+
+
+    // pgvector
+    implementation 'org.springframework.ai:spring-ai-starter-vector-store-pgvector'
+    implementation 'org.springframework.ai:spring-ai-advisors-vector-store'
+
+    // jdbc chat memory
+    implementation 'org.springframework.ai:spring-ai-starter-model-chat-memory-repository-jdbc'
+
+    // Rag & Utility
+    implementation 'org.springframework.ai:spring-ai-rag'
+    implementation 'org.springframework.ai:spring-ai-pdf-document-reader'
+    implementation 'org.springframework.ai:spring-ai-tika-document-reader'
+    implementation 'org.springframework.ai:spring-ai-jsoup-document-reader'
+
+    // MCP
+    //implementation 'org.springframework.ai:spring-ai-starter-mcp-client'
+    implementation 'org.springframework.ai:spring-ai-starter-mcp-client-webflux'
+
+    // test
+    testImplementation 'io.projectreactor:reactor-test'
+
+    testImplementation 'org.projectlombok:lombok'
+    testAnnotationProcessor 'org.projectlombok:lombok'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+}
+
+dependencyManagement {
+    imports {
+        mavenBom "org.springframework.ai:spring-ai-bom:${springAiVersion}"
+    }
+}
+
+tasks.named('test') {
+    useJUnitPlatform()
+}
+
+
+    </pre>
+    <h4>2. application.yml </h4>
+    <ol>
+        <li>application.yml<br>
+        <pre style="border:1px solid cornflowerblue">
+
+spring:
+  profiles:
+    active: dev
+        </pre>
+        </li>
+        <li>application-dev.yml<br>
+            <pre style="border:1px solid cornflowerblue">
+
+### 개발 시 사용 thymeleaf 변경시 즉시 반영
+
+# Tomcat Server
+server:
+  port: 80
+
+# Logging
+logging:
+  level:
+    root: INFO
+    org:
+      springframework:
+        ai:
+          chat:
+            client:
+              advisor: DEBUG  # To see the logs, set the logging level for the advisor package to DEBUG:
+
+# Spring Boot
+spring:
+  config:
+    import: optional:file:.env[.properties]
+  application:
+    name: edu
+  thymeleaf:
+    cache: false
+    prefix: file:src/main/resources/templates/
+    suffix: .html
+  web:
+    resources:
+      static-locations: file:src/main/resources/static/
+  servlet:
+    multipart:
+      max-request-size: 20MB
+      enabled: true
+      max-file-size: 20MB
+  devtools:
+    restart:
+      enabled: true
+    livereload:
+      enabled: true
+  # Datasource
+  datasource:
+    url: jdbc:postgresql://localhost:5432/postgres
+    username: user01
+    password: 111111
+    driver-class-name: org.postgresql.Driver
+  sql:
+    init:
+      mode: always
+      # Manually Create Chat Memory Pgvector Table
+      schema-locations:
+        - "classpath:/schema/chat_pgvector.sql"
+  ai:
+    # Automatically create chat memory JDBC tables
+    chat:
+      memory:
+        repository:
+          jdbc:
+            initialize-schema: always
+    # Vectorstore setting
+    vectorstore:
+      pgvector:
+        initialize-schema: true
+    openai:
+      api-key: ${OPEN_AI_KEY}
+      chat:
+        options:
+          model: gpt-4o
+          temperature: 1.0
+          max-tokens: 1000
+#    openai:
+#      api-key: ${GEMINI_KEY}
+#      chat:
+#        options:
+#          model: gemini-3-flash-preview
+#          temperature: 1.0
+#          max-tokens: 1000
+#        completions-path: /v1/chat/completions
+#        base-url: https://generativelanguage.googleapis.com/v1beta/openai/
+### MCP Setting
+    mcp:
+      client:
+        stdio:
+          servers-configuration: classpath:mcp-servers.json
+        sse:
+          connections:
+            #### async 일때만 동작, sync와 동시에 사용은 안됨
+            mcp-server-weather-webflux:
+              url: http://127.0.0.1:8089
+#            mcp-server-weather-webmvc:
+#              url: http://127.0.0.1:8088
+#              sse-endpoint: /custom-sse
+        type: sync  # default sync
+        </pre>
+        </li>
+        <li>application-prod.yml<br>
+            <pre style="border:1px solid cornflowerblue">
+
+### 배포 시 아래 내용 부분만 변경
+
+....
+spring:
+  config:
+    import: optional:file:.env[.properties]
+  thymeleaf:
+    cache: false
+    prefix: classpath:/templates/
+    suffix: .html
+  web:
+    resources:
+      static-locations: classpath:/static/, classpath:/prompt/
+....
+        </pre>
+        </li>
+    </ol>
+
+    <h4>3. bootJar 실행 </h4>
+    <pre style="border:1px solid cornflowerblue">
+
+        java -jar dev-0.0.1-SNAPSHOT.jar --spring.profiles.active=prod
+    </pre>
+
+
+</th:block>
+
+</html>

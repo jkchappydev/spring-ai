@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+
+
+
+<th:block>
+
+    <script>
+        speech_to_text_chat_voice = {
+            url: '/ch5/speech-to-text-chat-voice',
+            audioStream: '',
+            mediaRecorder: '',
+            init:function(){
+
+                document.querySelector("#spinner").style.cssText = "visibility:hidden;";
+            },
+            startRecording:async function() {
+
+            },
+            stopRecording:function(){
+
+            },
+            makeQuestionHtml:function(audioTargetId){
+
+            },
+            makeResponseHtml: async function(){
+
+            },
+            send:async function(blob, audioURL){
+
+            },
+            responseDisplay:function(responseJson, targetId){
+
+            }
+        }
+        window.onload = function(){
+            speech_to_text_chat_voice.init();
+        }
+    </script>
+
+
+    <div class="col-sm-10">
+        <h2 class="text-center">6. Speech to Text : Chat Voice</h2>
+        <div class="container py-5">
+
+            <div class="row d-flex justify-content-center">
+                <div class="col-sm-10">
+                    <button class="btn btn-primary" disabled id="spinner">
+                        <span class="spinner-border spinner-border-sm" ></span>
+                        Loading..
+                    </button>
+
+                    <div class="card">
+                        <div class="card-header text-muted d-flex justify-content-start align-items-center p-3">
+                            <div class="input-group mb-0">
+                                <span class="input-group-text mr-2">음성으로 질문하세요</span>
+                                <button type="button" class="btn btn-primary mr-2" id="record_btn">Record</button>
+                                <button type="button" class="btn btn-primary mr-2"  id="stop_btn">Stop & Send</button>
+                            </div>
+                        </div>
+                        <div id="result" class="card-body" data-mdb-perfect-scrollbar-init >
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</th:block>
+
+</html>

@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+
+<th:block>
+    <h4>5. Multimodality API - Generating with Voice</h4>
+    <br>
+    <table class="table table-bordered">
+        <thead>
+        <tr>
+            <th>File Name</th>
+            <th>Description</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+            <td> 1. Text to Speech</td>
+            <td>사용자가 입력한 텍스트를 LLM 기반 음성 합성 모델로 전달하여<br>
+                해당 문장을 자연스러운 음성 데이터(Audio) 로 변환해 반환하는 기능입니다.</td>
+        </tr>
+        <tr>
+            <td> 2. Text to Speech: Chat</td>
+            <td>사용자 입력 텍스트를 먼저 LLM에 전달하여 답변을 생성하고,<br>
+                생성된 텍스트 응답을 다시 음성으로 변환하여 사용자에게 제공하는 방식입니다.</td>
+        </tr>
+        <tr>
+            <td> 3. Text to Speech: Chat Stream</td>
+            <td>사용자 텍스트를 LLM에 전달하여 생성된 응답을<br>
+                실시간 스트리밍(Streaming) 방식으로 음성 변환하여 전달하는 기능입니다.</td>
+        </tr>
+        <tr>
+            <td>4. Speech to Text</td>
+            <td>사용자가 말한 음성 입력(Audio)을 텍스트로 변환하여<br>
+                Prompt 형태로 시스템에 전달하는 기능입니다.</td>
+        </tr>
+        <tr>
+            <td> 5. Speech to Text: Chat</td>
+            <td>사용자의 음성을 텍스트로 변환한 뒤,<br>
+                그 텍스트를 LLM에 전달해 생성된 답변을 다시 사용자에게 제공하는 방식입니다.<br>
+                프로세스 흐름<br>
+                Speech → STT → Text<br>
+                Text → LLM → Text 응답</td>
+        </tr>
+        <tr>
+            <td> 6. Speech to Text: Chat Voice</td>
+            <td>사용자 음성을 텍스트로 변환한 후 LLM에 전달하여 답변을 생성하고,<br>
+                그 응답을 텍스트 + 음성 두 가지 형태로 모두 제공하는 방식입니다.<br>
+                프로세스 흐름<br>
+                Speech → STT → Text<br>
+                Text → LLM → Text 응답<br>
+                Text 응답 → TTS → Audio 응답<br>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+
+</th:block>
+
+</html>

@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+
+<th:block>
+
+    <h2>Gemini AI Setting</h2><br>
+    <h4>1. Key 발급</h4><br>
+    <a href="https://aistudio.google.com/api-keys" target="_blank">Gemini Key 발습사이트 접속</a><br><br>
+    <p>1) Projects -> Create a new project: 생성 후 프로젝트 명 복사</p>
+    <p>2) API Keys -> Create aAPI Key: 키 생성 시 Project를 선택 하여 셋팅</p>
+    <img th:src="@{/imgs/gemini.png}" width="600px;"><br><br>
+    <h4>2. Gemini Documentation</h4><br>
+    <a href="https://ai.google.dev/gemini-api/docs" target="_blank">Gemini Documentation</a><br><br>
+    <h4>3. Spring Boot Project에 Key 정보 입력</h4><br>
+    <p>.env 파일 생성 후 키값 입력, 반드시 Git 연동 시 .gitignore에 등록</p>
+    <img th:src="@{/imgs/env.png}" width="600px;"><br><br>
+    <pre style="border:1px solid cornflowerblue">
+OPEN_AI_KEY=sk-proj-TcdDCv
+GEMINI_KEY=AIzaSyDkpW5sh1I</pre>
+    <p>.env 파일을 spring boot 프로젝트가 인식 할 수 있도록 yml 파일에 내용 추가</p>
+    <pre style="border:1px solid cornflowerblue">
+
+spring:
+  config:
+    import: optional:file:.env[.properties]
+    </pre><br><br>
+
+</th:block>
+
+</html>

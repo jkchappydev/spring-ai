@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+
+<th:block>
+
+    <h1>Chapter 2. Prompt Template & Structured Output Converter</h1><br>
+
+    <h2>1. Prompt Template</h2>
+    <p>
+        프롬프트(Prompt)는 AI 모델이 특정 목적의 결과를 생성하도록 유도하는 핵심 입력 요소입니다.
+        프롬프트의 구성 방식과 설계 품질은 모델의 응답 정확도, 일관성 및 활용도에 큰 영향을 줍니다.
+    </p>
+    <img th:src="@{/imgs/prompt.png}" width="600px;"><br><a href="https://docs.spring.io/spring-ai/reference/index.html">출처:docs.springai.io</a><br><br>
+
+    <img th:src="@{/imgs/prompt2.png}" width="600px;"><br><a href="https://docs.spring.io/spring-ai/reference/index.html">출처:docs.springai.io</a><br><br>
+
+    <p>
+        Spring AI에서 프롬프트는 Spring MVC의 <strong>뷰(View) 렌더링 구조</strong>와 유사한 방식으로 처리됩니다.
+        즉, 동적으로 치환될 수 있는 플레이스홀더를 포함한 텍스트 템플릿을 생성하고,
+        실행 시점에 사용자 입력 또는 애플리케이션 데이터로 해당 플레이스홀더를 채워
+        모델에 전달할 최종 프롬프트를 구성합니다.
+    </p>
+
+    <p>
+        이는 SQL에서 <code>:parameter</code>가 실제 값으로 치환되는 구조와 유사한 개념으로,
+        Spring AI에서는 <code>ChatModel</code>을 통해 이러한 기본 프롬프트 처리 계층을 제공하고,
+        그 위에서 <code>ChatClient</code>와 <code>ChatModelAdvisor</code>를 통해
+        보다 고수준의 기능(문맥 보강, 대화 흐름 추적, 에이전트 기능 등)을 제공합니다.
+    </p>
+
+    <p>
+        OpenAI의 역할(Role) 기반 메시지 구조가 도입되면서 프롬프트는 단순 문자열에서 벗어나
+        <code>system</code>, <code>user</code>, <code>assistant</code>, <code>tool</code> 등의 역할을 포함한
+        구조화된 메시지 세트 형태로 발전했습니다.
+    </p>
+
+    <h3>주요 메시지 역할(Role)</h3>
+    <span><a href="https://docs.spring.io/spring-ai/reference/api/prompt.html#_prompttemplate">springai 참고</a></span>
+    <ul>
+        <li><strong>System</strong>: AI의 전체 동작 방식, 규칙, 제약 조건을 정의합니다.</li>
+        <li><strong>User</strong>: 사용자의 질문·명령으로, AI의 응답 근거가 되는 핵심 입력입니다.</li>
+        <li><strong>Assistant</strong>: AI가 생성하는 응답 메시지이며, 대화 맥락을 유지합니다.</li>
+        <li><strong>Tool / Function</strong>: 외부 도구 또는 함수 호출의 결과를 전달하는 역할입니다.</li>
+    </ul>
+
+    <div class="source">출처: docs.springai.io</div>
+    <hr>
+
+    <h2>2. PromptTemplate</h2>
+    <p>
+        <strong>PromptTemplate</strong> 클래스는 Spring AI에서 프롬프트를 구조화하고 재사용 가능한 형태로 관리하기 위한 핵심 구성 요소입니다.
+    </p>
+    <p>
+        문자열 기반 템플릿에 변수를 바인딩하는 방식으로 단일 문장부터 복잡한 구조의 프롬프트까지 생성할 수 있으며,
+        이를 통해 모델 호출 시 정확하게 제어된 입력을 전달할 수 있습니다.
+    </p>
+    <hr>
+
+    <h2>3. Creating Effective Prompts</h2>
+    <p>효과적인 프롬프트를 작성하기 위해 다음 요소들을 명확하게 포함하는 것이 중요합니다.</p>
+    <span><a href="https://docs.spring.io/spring-ai/reference/api/prompt.html#_example_usage">springai 참고</a></span>
+    <ul>
+        <li>
+            <strong>Instructions (지시)</strong> —
+            AI가 수행해야 하는 작업에 대한 명확하고 직접적인 지침을 제공합니다.
+        </li>
+
+        <li>
+            <strong>External Context (외부 맥락)</strong> —
+            배경정보, 사전 조건, 예제 등 상황 이해를 보조하는 데이터 요소들을 제공합니다.
+        </li>
+
+        <li>
+            <strong>User Input (사용자 입력)</strong> —
+            사용자가 실제로 요청한 질문·명령이 프롬프트의 핵심 부분이 됩니다.
+        </li>
+
+        <li>
+            <strong>Output Indicator (출력 형식 지정자)</strong> —
+            모델이 생성해야 할 출력의 형식을 명시합니다(JSON, XML, Markdown 등).
+            단, LLM은 형식을 완벽하게 준수하지 않을 수 있으므로 후처리가 필요합니다.
+        </li>
+    </ul>
+
+    <div class="source">springai 참고</div>
+    <hr>
+
+    <h2>4. Structured Output Converter</h2>
+    <p>
+        LLM이 생성한 비정형 텍스트를 JSON, XML, Java 객체 등 <strong>구조화된 형식</strong>으로 변환하는 것은
+        후속 애플리케이션 로직을 안전하게 수행하기 위해 필수적입니다.
+    </p>
+
+    <p>
+        Spring AI는 <strong>Structured Output Converter</strong>를 통해 LLM의 출력값을
+        안정적으로 파싱 가능한 데이터 구조로 변환하는 기능을 제공합니다.
+    </p>
+    <img th:src="@{/imgs/structure.png}" width="600px;"><br><a href="https://docs.spring.io/spring-ai/reference/api/structured-output-converter.html#_bean_output_converter">출처:docs.springai.io</a><br><br>
+    <img th:src="@{/imgs/structure2.png}" width="600px;"><br><a href="https://docs.spring.io/spring-ai/reference/api/structured-output-converter.html#_bean_output_converter">출처:docs.springai.io</a><br><br>
+
+
+    <p>변환 과정은 크게 두 단계로 구성됩니다.</p>
+
+    <ul>
+        <li>
+            <strong>LLM 호출 전 (Pre-processing)</strong> —
+            모델이 특정 포맷(JSON, XML 등)을 생성하도록
+            스키마, 형식 규칙, 출력 예시 등의 지침을 프롬프트에 삽입합니다.
+        </li>
+
+        <li>
+            <strong>LLM 호출 후 (Post-processing)</strong> —
+            모델의 응답 텍스트를 파싱하여
+            JSON → Java 객체 등 지정된 데이터 구조로 변환합니다.
+        </li>
+    </ul>
+    <hr>
+
+    <h2>5. Available Converters</h2>
+    <img th:src="@{/imgs/structure3.png}" width="600px;"><br><a href="https://docs.spring.io/spring-ai/reference/api/structured-output-converter.html#_bean_output_converter">출처:docs.springai.io</a><br><br>
+    <span><a href="https://docs.spring.io/spring-ai/reference/api/structured-output-converter.html#_bean_output_converter">springai 참고</a></span>
+    <h3>BeanOutputConverter</h3>
+    <p>
+        Java Bean 또는 <code>ParameterizedTypeReference&lt;T&gt;</code> 기반의 객체로 변환하기 위한 컨버터입니다.
+        AI 출력이 지정된 JSON Schema를 준수하도록 유도하며,
+        변환 시 <strong>ObjectMapper</strong>를 활용하여 JSON을 Java 객체로 역직렬화합니다.
+    </p>
+
+    <h3>MapOutputConverter</h3>
+    <p>
+        JSON 구조를 <code>Map&lt;String, Object&gt;</code> 형태로 파싱하는 컨버터입니다.
+        동적으로 구조가 변하는 JSON을 처리할 때 적합하며,
+        FormatProvider를 활용하여 모델이 생성해야 할 JSON 형식을 명시합니다.
+    </p>
+
+    <h3>ListOutputConverter</h3>
+    <p>
+        쉼표 구분 텍스트 또는 목록 구조를 Java의 <code>List&lt;T&gt;</code>로 변환하는 컨버터입니다.
+        ConversionService를 기반으로 텍스트를 리스트 타입으로 안전하게 변환합니다.
+    </p>
+
+</th:block>
+
+</html>

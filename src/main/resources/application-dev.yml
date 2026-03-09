@@ -1,18 +1,47 @@
 server:
   port: 8088
+
+# logging
+logging:
+  level:
+    root: info
+
 spring:
+  # .env
+  config:
+    import: optional:file:.env[.properties]
+
   application:
-    name: edu
+    name: spring-ai
+
   thymeleaf:
     cache: false
     prefix: file:src/main/resources/templates/
     suffix: .html
+
   web:
     resources:
       static-locations: file:src/main/resources/static/
+
+  # 파일 업로드 할 때 사이즈
+  servlet:
+    multipart:
+      max-request-size: 20MB
+      enabled: true
+      max-file-size: 20MB
 
   devtools:
     restart:
       enabled: true
     livereload:
       enabled: true
+
+  # ai
+  ai:
+    openai:
+      api-key: ${OPEN_AI_KEY}
+      chat:
+        options:
+          model: gpt-4o
+          temperature: 1.0
+          max-tokens: 1000

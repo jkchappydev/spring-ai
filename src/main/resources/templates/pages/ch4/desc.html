@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+
+<th:block>
+    <h4>4. Multimodality API - Generating with Pictures</h4>
+    <br>
+    <table class="table table-bordered">
+        <thead>
+        <tr>
+            <th>File Name</th>
+            <th>Description</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+            <td> 1. Generate Image for URL</td>
+            <td>사용자가 입력한 Prompt를 기반으로 이미지 생성 모델을 호출하여,<br>
+                생성된 결과물을 URL 형태로 반환받는 방식입니다.</td>
+        </tr>
+        <tr>
+            <td>  2. Generate Image</td>
+            <td>Prompt 기반 이미지 생성은 동일하지만,<br>
+                생성된 이미지를 Binary 파일(Base64 또는 Blob) 로 직접 받아서 화면에 렌더링하는 방식입니다.</td>
+        </tr>
+        <tr>
+            <td>3. Image Analysis</td>
+            <td>사용자가 업로드하거나 선택한 이미지와 함께 Prompt를 LLM 또는 Vision Model에 전달하여<br>
+                이미지의 내용, 상황, 요소 분석 등 다양한 비전 기반 인식 작업을 수행합니다.</td>
+        </tr>
+        <tr>
+            <td>4. Video Analysis</td>
+            <td>카메라 또는 동영상 스트림에서 캡처한 이미지를 LLM에 전송하여<br>
+                영상의 특정 프레임에 대한 분석을 수행하는 방식입니다.</td>
+        </tr>
+        </tbody>
+    </table>
+
+</th:block>
+
+</html>

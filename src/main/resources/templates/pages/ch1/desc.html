@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+
+<th:block>
+
+    <h4>1. Chat Completion</h4>
+    <br>
+    <table class="table table-bordered">
+        <thead>
+        <tr>
+            <th>File Name</th>
+            <th>Description</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+            <td> 1. Chat (Zero-Shot Prompting)</td>
+            <td>Zero-Shot Prompting은 사용자가 전달한 Prompt만을 기반으로 LLM이 응답을 생성하는 방식입니다.
+                사전 예시(Example)나 추가 힌트를 제공하지 않기 때문에 모델은 내장된 사전 학습 지식만으로 문제를 해석하고 처리합니다.</td>
+        </tr>
+        <tr>
+            <td> 2. Chat Stream</td>
+            <td>사용자 Prompt를 모델에 전달한 뒤, 응답을 한 번에 반환하는 것이 아니라
+                Reactive Streams(Project Reactor) 기반으로 스트리밍하는 방식입니다.</td>
+        </tr>
+        <tr>
+            <td>3. Chat (Few-Shot Prompting)</td>
+            <td>모델이 특정 작업을 더 정확하게 수행하도록 여러 개의 예시(Input/Output Pair)를 Prompt에 포함하는 방식입니다.</td>
+        </tr>
+        <tr>
+            <td>4. Chat (Chain-of-Thought Prompting)</td>
+            <td>LLM이 문제를 해결하는 과정에서 중간 추론 과정을 스스로 단계적으로 전개하도록 유도하는 Prompting 방식입니다.</td>
+        </tr>
+        <tr>
+            <td>5. Chat Memory</td>
+            <td>LLM과의 대화 맥락을 메모리에 저장하고, 후속 요청 시 이를 다시 불러와
+                지속적이고 자연스러운 콘텍스트 기반 대화를 가능하게 하는 기능입니다.</td>
+        </tr>
+        </tbody>
+    </table>
+
+</th:block>
+
+</html>

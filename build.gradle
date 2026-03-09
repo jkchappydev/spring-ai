@@ -23,19 +23,28 @@ repositories {
 }
 
 dependencies {
-    implementation 'org.springframework.boot:spring-boot-starter'
-    implementation 'org.springframework.boot:spring-boot-starter-webmvc'
-    /*implementation 'org.springframework.ai:spring-ai-starter-model-openai'*/
     implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
-    implementation 'org.projectlombok:lombok'
-    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    compileOnly 'org.projectlombok:lombok'
     developmentOnly 'org.springframework.boot:spring-boot-devtools'
+    annotationProcessor 'org.projectlombok:lombok'
+
+    // spring-ai-openai
+    implementation 'org.springframework.ai:spring-ai-openai'
+    implementation 'org.springframework.ai:spring-ai-starter-model-openai'
+
+    // test (Reactor(Mono, Flux) 비동기 로직을 테스트할 때 쓰는 테스트 전용 라이브러리 - WebFlux 나 Reactor 코드 테스트하려고 넣은 것)
+    testImplementation 'io.projectreactor:reactor-test'
+
+    testImplementation 'org.projectlombok:lombok'
+    testAnnotationProcessor 'org.projectlombok:lombok'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 }
 
 dependencyManagement {
     imports {
-        mavenBom "org.springframework.ai:spring-ai-bom:$springAiVersion"
+        mavenBom "org.springframework.ai:spring-ai-bom:${springAiVersion}"
     }
 }
 

@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+
+<th:block>
+    <h4>9. MCP(Model Context Protocol)</h4>
+    <table class="table table-bordered">
+        <thead>
+        <tr>
+            <th>File Name</th>
+            <th>Description</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+            <td>  1. MCP Chat</td>
+            <td>
+                사용자의 질문을 다양한 MCP서버와 연동하여 LLM과 대화할 수 있도록 지원하는 기능입니다.<br>
+                다음과 같은 3가지 방법으로 MCP Server를 구현해 보고자 합니다.<br>
+                <ul>
+                    <li>Standard Input/Output (STDIO) MCP Server: 날씨 예보</li>
+                    <li>SSE WebMVC MCP Server: 현재 날씨</li>
+                    <li>SSE WebFlux MCP Server: 현재 시간</li>
+                </ul>
+                기술 특징<br>
+                Spring MVC 기반 Web/REST 컨트롤러와 자연스럽게 통합<br>
+                대규모 멀티채널 챗봇, 고객지원 시스템에 활용<br>
+            </td>
+        </tr>
+        <tr>
+            <td>  2. MCP Access</td>
+            <td>
+                카메라를 통해 사원증을 인식 하여 사원증에 있는 ID Number를 기반으로 출업 허가 하는 시스템 입니다..<br>
+                다음과 같은 2가지 방법으로 MCP Server를 구현해 보고자 합니다.<br>
+                <ul>
+                    <li>SSE WebFlux MCP Server: 직원의 사번과 모든 직원 사번과 비교(Tool Calling 방식으로도 변환) </li>
+                    <li>SSE WebMVC MCP Server: 사번이 일치 여부에 따라 출입문 통제</li>
+                </ul>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+
+</th:block>
+
+</html>

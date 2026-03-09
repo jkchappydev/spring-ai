@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+
+
+
+<th:block>
+
+    <script>
+        chat_stream = {
+            url:'/ch1/stream',
+            init:function(){
+                document.querySelector("#send_btn").addEventListener("click", ()=>{
+                    this.send();
+                })
+                document.querySelector("#spinner").style.cssText = "visibility:hidden;";
+            },
+            // 질문 내용 출력 HTML 생성
+            makeQuestionHtml:function(question){
+                const questionArea = document.createElement("div");
+                questionArea.innerHTML = `
+                                <div class="d-flex justify-content-between">
+                                    <p class="small mb-1">User</p>
+                                    <p class="small mb-1 text-muted">`+new Date().toLocaleTimeString('ko-kr')+`</p>
+                                </div>
+                                <div class="d-flex flex-row justify-content-start">
+                                    <img src="/imgs/user.jpg"
+                                         alt="User" style="width: 45px; height: 100%;">
+                                    <div>
+                                        <p class="small p-2 ms-3 mb-3 rounded-3 bg-body-tertiary bg-warning">`+question+`</p>
+                                    </div>
+                                </div>
+                                `;
+                document.querySelector('#result').prepend(questionArea);
+            },
+            // 답변 내용 출력 HTML 생성 후 답변을 출력 할 영역의 ID 리턴
+            makeResponseHtml: async function(){
+                let targetId = "target-" + crypto.getRandomValues(new Uint32Array(10));
+                const responseArea = document.createElement("div");
+                responseArea.innerHTML = `
+                                <div class="d-flex justify-content-between">
+                                    <p class="small mb-1 text-muted">`+new Date().toLocaleTimeString('ko-kr')+`</p>
+                                    <p class="small mb-1">Chatbot</p>
+                                </div>
+                                <div class="d-flex flex-row justify-content-end mb-4 pt-1">
+                                    <div class="small p-2 me-3 mb-3 rounded-3 bg-info" style="overflow: auto">
+                                        <pre class="text-white" style="font-weight: bold" id="`+targetId+`"></pre>
+                                    </div>
+                                    <img src="/imgs/chatbot.png"
+                                         alt="Chat Bot" style="width: 45px; height: 100%;">
+                                </div>
+                            `;
+                document.querySelector('#result').prepend(responseArea);
+                return targetId;
+            },
+            send:async function(){
+                document.querySelector('#spinner').style.cssText = "visibility:visible;";
+                let question = document.querySelector('#question').value;
+                // Question 화면에 출력
+                this.makeQuestionHtml(question);
+
+                const response = await fetch(this.url, {
+                    method: "post",
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded', // 클라이언트가 서버로 데이터를 보낼 때 key1=value1&key2=value2 형태의 쿼리 스트링 형식으로 인코딩하여 전달함을 의미합니다. 주로 HTML <form> 제출 시 기본값으로 사용됩니다.
+                        'Accept': 'application/x-ndjson'  // 서버로부터 응답을 받을 때 Newline Delimited JSON(NDJSON) 형식을 기대한다는 의미입니다. NDJSON은 대용량 데이터나 실시간 스트리밍 데이터를 한 줄에 하나씩 JSON 객체로 나누어 전송할 때 사용됩니다.
+                    },
+                    body: new URLSearchParams({prompt: question})
+                });
+                // Response를 화면에 출력하기 위한 HTML 생성 후 결과를 출력 할 영역의 ID 리턴
+                const targetId = await this.makeResponseHtml();
+                // 리턴 받은 ID에 Reactive Stream으로 전달 받은 데이터 출력
+                await this.responseDisplay(targetId, response);
+            },
+            responseDisplay:async function(targetId, response) {
+                const target = document.getElementById(targetId);
+                const reader = response.body.getReader();
+                const decoder = new TextDecoder("utf-8");
+                while (true) {
+                    const {value, done} = await reader.read();
+                    if (done) break;
+                    let ch = decoder.decode(value);
+                    console.log(ch) // 이부분이 stream 텍스트
+                    target.append(document.createTextNode(ch));
+                }
+                document.querySelector("#spinner").style.cssText = "visibility:hidden;";
+            }
+        }
+        window.onload = function(){
+            chat_stream.init();
+        }
+    </script>
+
+
+    <div class="col-sm-10">
+        <h2 class="text-center">2. Chat Client - Reactive Streams</h2>
+            <div class="container py-5">
+
+                <div class="row d-flex justify-content-center">
+                    <div class="col-sm-10">
+                        <button class="btn btn-primary" disabled id="spinner">
+                            <span class="spinner-border spinner-border-sm" ></span>
+                            Loading..
+                        </button>
+                        <div class="card">
+                            <div class="card-header text-muted d-flex justify-content-start align-items-center p-3">
+                                <div class="input-group mb-0">
+                                    <input  id="question" type="text" class="form-control" placeholder="Type message" value="서울의 맛집 알려줘"
+                                           aria-label="Recipient's username" aria-describedby="button-addon2" />
+                                    <button type="button" class="btn btn-primary" id="send_btn">Send</button>
+                                </div>
+                            </div>
+                            <div id="result" class="card-body" data-mdb-perfect-scrollbar-init >
+
+
+                            </div> <!-- end result -->
+                        </div> <!-- end card -->
+                    </div>
+                </div>
+            </div>
+    </div>
+
+</th:block>
+
+</html>

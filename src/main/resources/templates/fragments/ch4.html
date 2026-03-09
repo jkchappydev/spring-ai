@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+
+<th:block>
+
+    <h1>Chapter 4. Multimodality API – Images & Vision</h1><br>
+
+    <h2>1. Multimodality API</h2>
+
+    <p>
+        인간은 시각, 청각, 언어 등 다양한 감각 정보를 동시에 처리하여 의미를 해석합니다.
+        그러나 기존 머신러닝 시스템은 특정 입력 형식에만 최적화된
+        <strong>단일 모달리티(Single-Modality) 모델</strong> 중심으로 발전해 왔습니다.
+        예를 들어 오디오 기반 텍스트 변환 모델(STT/TTS)이나 객체 인식·분류를 위한 컴퓨터 비전 모델이 대표적입니다.
+    </p>
+
+    <p>
+        최근에는 여러 입력 형식을 통합적으로 이해할 수 있는
+        <strong>멀티모달 대규모 언어 모델(MLLM: Multimodal Large Language Model)</strong>이 등장하여
+        텍스트뿐 아니라 이미지, 오디오, 비디오 같은 다양한 데이터를 동시에 처리하고 고도화된 텍스트 응답을 생성할 수 있게 되었습니다.
+        대표적인 모델은 다음과 같습니다.
+    </p>
+
+    <ul>
+        <li><strong>OpenAI GPT-4o</strong></li>
+        <li><strong>Google Vertex AI Gemini 1.5</strong></li>
+        <li><strong>Anthropic Claude 3</strong></li>
+        <li><strong>오픈소스 모델:</strong> Llama 3.2, LLaVA, BakLLaVA 등</li>
+    </ul>
+
+    <p>
+        이러한 모델들은 멀티모달 데이터를 통합하여 추론할 수 있는 능력을 제공하며,
+        <strong>Spring AI Message API</strong>는 이러한 MLLM을 효율적으로 활용하기 위한 추상화 계층을 제공합니다.
+    </p>
+    <hr>
+
+    <h2>2. UserMessage 및 Media 필드 구조</h2>
+    <img th:src="@{/imgs/multimodality.png}" width="600px;"><br><a href="https://docs.spring.io/spring-ai/reference/api/multimodality.html">출처:docs.springai.io</a><br><br>
+
+    <p>
+        Spring AI의 <code>UserMessage</code>는 기본적으로 텍스트 입력을 담당하는
+        <strong>content</strong> 필드를 중심으로 구성됩니다.
+        여기에 선택적으로 <strong>media</strong> 필드를 추가하여 이미지, 오디오, 비디오와 같은
+        멀티모달 데이터를 함께 전달할 수 있습니다.
+    </p>
+
+    <p>
+        <strong>media</strong> 필드는 첨부된 데이터의 형식을 정의하는 <strong>MimeType</strong>을 포함합니다.
+        또한 모델에 따라 미디어 데이터는 다음과 같은 형태로 제공됩니다.
+    </p>
+
+    <ul>
+        <li><strong>Resource 기반 원시(raw) 미디어 데이터</strong></li>
+        <li><strong>URI 기반 외부 리소스 경로</strong></li>
+    </ul>
+
+    <p>
+        이를 통해 다양한 모델 요구 사항에 맞춰 유연하게 멀티모달 입력을 구성할 수 있습니다.
+    </p>
+    <hr>
+
+    <h2>3. Spring AI에서 지원하는 Multimodal Chat Models</h2>
+
+    <p>Spring AI는 주요 AI 플랫폼의 멀티모달 모델과의 연동을 지원합니다:</p>
+
+    <ul>
+        <li><strong>Anthropic – Claude 3</strong></li>
+        <li><strong>AWS Bedrock – Converse 멀티모달 모델</strong></li>
+        <li><strong>Azure OpenAI – GPT-4o 계열 모델</strong></li>
+        <li><strong>Mistral AI – Pixtral 멀티모달 모델</strong></li>
+        <li><strong>Ollama – LLaVA, BakLLaVA, Llama3.2</strong></li>
+        <li><strong>OpenAI – GPT-4, GPT-4o</strong></li>
+        <li><strong>Google Vertex AI – Gemini 1.5 Pro/Flash</strong></li>
+    </ul>
+
+    <p>
+        이들 모델을 활용하면 Spring AI를 통해 텍스트·이미지·오디오·비디오 기반의 입력을 통합적으로 처리하며
+        풍부한 멀티모달 상호작용을 구현할 수 있습니다.
+    </p>
+
+
+    <hr>
+
+    <h2>4. Analyze images</h2><br>
+    <a href="https://platform.openai.com/docs/guides/images-vision?api-mode=responses">출처:platform.openai.com</a><br><br>
+    <pre style="border:1px solid cornflowerblue">
+
+        Message systemMessage  = systemPrompt.createMessage();
+
+            public Flux&lt;String&gt; imageAnalysis(String question, String contentType, byte[] bytes) {
+
+                Message systemMessage  = systemPrompt.createMessage();
+
+                Media media = Media.builder()
+                        .mimeType(MimeType.valueOf(contentType))
+                        .data(new ByteArrayResource(bytes))
+                        .build();
+                UserMessage userMessage = UserMessage.builder()
+                        .text(question)
+                        .media(media)
+                        .build();
+
+                return chatClient.prompt()
+                        .messages(userMessage,systemMessage)
+                        .stream()
+                        .content();
+            }
+
+    </pre><br>
+    <hr>
+
+    <h2>5. Image generation</h2><br>
+    <a href="https://platform.openai.com/docs/guides/image-generation?image-generation-model=gpt-image-1">출처:platform.openai.com</a><br><br>
+    <pre style="border:1px solid cornflowerblue">
+
+            public String generateImageToText(String description) {
+                return generateImage(description, "b64_json")
+                        .getResult()
+                        .getOutput()
+                        .getB64Json();
+            }
+            private ImageResponse generateImage(String description, String format) {
+
+                ImageMessage imageMessage = new ImageMessage(description);
+                OpenAiImageOptions imageOptions = OpenAiImageOptions.builder()
+                        .model("dall-e-3")
+                        .responseFormat(format)
+                        .width(1024)
+                        .height(1024)
+                        .N(1)
+                        .build();
+                List&lt;ImageMessage&gt; imageMessageList = List.of(imageMessage);
+                ImagePrompt imagePrompt = new ImagePrompt(imageMessageList, imageOptions);
+
+                return imageModel.call(imagePrompt);
+            }
+    </pre>
+
+</th:block>
+
+</html>
