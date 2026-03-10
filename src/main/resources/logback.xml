@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<configuration>
+    <!-- logs 디렉터리에 로그 파일을 저장한다. -->
+    <!-- 단, "자동 생성"은 Logback 이 파일 생성은 해주지만, 상위 디렉터리 생성 여부는 환경에 따라 달라질 수 있어 -->
+    <!-- 보통은 미리 디렉터리를 만들어두는 쪽이 안전하다. -->
+    <property name="LOGS_DIR" value="logs" />
+
+    <!-- 콘솔 출력용 Appender -->
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <Pattern>[%d{MM-dd HH:mm:ss}] %-5level %logger{36} - %msg%n</Pattern>
+        </encoder>
+    </appender>
+
+    <!-- FILE1: 파일 출력용 Appender -->
+    <!-- 날짜 기준으로 롤링되고, 최대 30일치 보관 / 전체 로그 용량은 3GB 까지 제한한다. -->
+    <!-- "30일 또는 3GB가 넘으면 새 파일 생성"이라고 쓰면 약간 틀리다. -->
+    <!-- 새 파일 생성 기준은 날짜(yyyy-MM-dd)이고, maxHistory 와 totalSizeCap 은 보관 정책이다. -->
+    <appender name="FILE1" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${LOGS_DIR}/simpleLoggerAdvisorHigh.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <!-- 날짜별로 파일 분리 -->
+            <fileNamePattern>${LOGS_DIR}/simpleLoggerAdvisorHigh.%d{yyyy-MM-dd}.log</fileNamePattern>
+            <!-- 최대 30일치 로그 보관 -->
+            <maxHistory>30</maxHistory>
+            <!-- 전체 보관 로그 용량은 최대 3GB -->
+            <totalSizeCap>3GB</totalSizeCap>
+        </rollingPolicy>
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss}, %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <!-- FILE2: 파일 출력용 Appender -->
+    <!-- 날짜 기준으로 롤링되고, 최대 30일치 보관 / 전체 로그 용량은 3GB 까지 제한한다. -->
+    <appender name="FILE2" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${LOGS_DIR}/simpleLoggerAdvisorLow.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <!-- 날짜별로 파일 분리 -->
+            <fileNamePattern>${LOGS_DIR}/simpleLoggerAdvisorLow.%d{yyyy-MM-dd}.log</fileNamePattern>
+            <!-- 최대 30일치 로그 보관 -->
+            <maxHistory>30</maxHistory>
+            <!-- 전체 보관 로그 용량은 최대 3GB -->
+            <totalSizeCap>3GB</totalSizeCap>
+        </rollingPolicy>
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss}, %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <!-- org.springframework.web 로그는 INFO 이상을 콘솔에 출력 -->
+    <logger name="org.springframework.web" level="INFO">
+        <appender-ref ref="STDOUT" />
+    </logger>
+
+    <!-- org.springframework.ai 로그는 INFO 이상을 콘솔에 출력 -->
+    <!-- additivity="false" 이므로 상위(root) 로거에 전달되지 않아 중복 출력 방지 가능 -->
+    <!-- 단, "application.yml에 root=info 라서 무조건 두 번 찍힌다"기보다는 -->
+    <!-- root appender 까지 전파될 때 중복 출력될 수 있어서 false를 준 것이라고 보는 게 정확하다. -->
+    <logger name="org.springframework.ai" level="INFO" additivity="false">
+        <appender-ref ref="STDOUT" />
+    </logger>
+
+    <!-- SimpleLoggerAdvisorHigh 에서 발생한 INFO 이상 로그를 FILE1에 기록 -->
+    <logger name="io.springai.springai.app.service.ch3.advisor.SimpleLoggerAdvisorHigh" level="INFO" additivity="false">
+        <appender-ref ref="FILE1" />
+    </logger>
+
+    <!-- SimpleLoggerAdvisorLow 에서 발생한 INFO 이상 로그를 FILE2에 기록 -->
+    <logger name="io.springai.springai.app.service.ch3.advisor.SimpleLoggerAdvisorLow" level="INFO" additivity="false">
+        <appender-ref ref="FILE2" />
+    </logger>
+
+    <!-- root 로거: 별도 설정되지 않은 로그들은 INFO 이상을 콘솔에 출력 -->
+    <root level="INFO">
+        <appender-ref ref="STDOUT" />
+    </root>
+
+    <!-- 로그 레벨 우선순위: TRACE < DEBUG < INFO < WARN < ERROR -->
+</configuration>

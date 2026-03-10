@@ -5,6 +5,13 @@ server:
 logging:
   level:
     root: info
+    # Spring AI Advisor 패키지의 로그 레벨을 DEBUG로 설정
+    org:
+      springframework:
+        ai:
+          chat:
+            client:
+              advisor: DEBUG
 
 spring:
   # .env
