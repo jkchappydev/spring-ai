@@ -52,3 +52,12 @@ spring:
           model: gpt-4o
           temperature: 1.0
           max-tokens: 1000
+#    openai:
+#      api-key: ${GEMINI_KEY}
+#      chat:
+#        options:
+#          model: gemini-3-flash-preview
+#          temperature: 1.0
+#          max-tokens: 1000
+#        completions-path: /v1/chat/completions
+#        base-url: https://generativelanguage.googleapis.com/v1beta/openai/
