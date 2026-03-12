@@ -11,26 +11,109 @@
             audioStream: '',
             mediaRecorder: '',
             init:function(){
-
+                document.querySelector("#record_btn").addEventListener("click", ()=>{this.startRecording()});
+                document.querySelector("#stop_btn").addEventListener("click", ()=>{this.stopRecording()});
                 document.querySelector("#spinner").style.cssText = "visibility:hidden;";
             },
             startRecording:async function() {
-
+                let chunks = [];
+                let stream = null;
+                try {
+                    stream = await navigator.mediaDevices.getUserMedia({ audio: true })
+                    this.audioStream = stream;
+                    this.mediaRecorder = new MediaRecorder(stream);
+                    this.mediaRecorder.ondataavailable = function(event) {
+                        chunks.push(event.data);
+                    };
+                    this.mediaRecorder.onstop = () => {
+                        const blob = new Blob(chunks, { 'type' : 'audio/ogg; codecs=opus' });
+                        const audioURL = URL.createObjectURL(blob);
+                        this.send(blob, audioURL);
+                        chunks = [];
+                    };
+                    this.mediaRecorder.start();
+                    document.querySelector("#record_btn").disabled = true;
+                    document.querySelector("#stop_btn").disabled = false;
+                    /* use the stream */
+                } catch (err) {
+                    console.error('Error accessing the microphone: ' + err);
+                }
             },
             stopRecording:function(){
-
+                this.mediaRecorder.stop();
+                this.audioStream.getTracks().forEach(track => track.stop());
+                document.querySelector("#record_btn").disabled = false;
+                document.querySelector("#stop_btn").disabled = true;
             },
             makeQuestionHtml: function(audioTargetId){
-
+                const questionArea = document.createElement("div");
+                questionArea.innerHTML = `
+                                <div class="d-flex justify-content-between">
+                                    <p class="small mb-1">User</p>
+                                    <p class="small mb-1 text-muted">`+new Date().toLocaleTimeString('ko-kr')+`</p>
+                                </div>
+                                <div class="d-flex flex-row justify-content-start">
+                                    <img src="/imgs/user.jpg"
+                                         alt="avatar 1" style="width: 45px; height: 100%;">
+                                    <div>
+                                        <p class="small p-2 ms-3 mb-3 rounded-3 bg-body-tertiary">
+                                              <audio id="`+audioTargetId+`" controls></audio>
+                                        </p>
+                                    </div>
+                                </div>
+                                `;
+                document.querySelector('#result').prepend(questionArea);
             },
             makeResponseHtml:async function(){
-
+                let targetId = "target-" + crypto.getRandomValues(new Uint32Array(10));
+                const responseArea = document.createElement("div");
+                responseArea.innerHTML = `
+                                        <div class="d-flex justify-content-between">
+                                            <p class="small mb-1 text-muted">`+new Date().toLocaleTimeString('ko-kr')+`</p>
+                                            <p class="small mb-1">Chatbot</p>
+                                        </div>
+                                        <div class="d-flex flex-row justify-content-end mb-4 pt-1">
+                                            <div class="small p-2 me-3 mb-3 rounded-3 bg-info" style="overflow: auto">
+                                                    <pre class="text-white" style="font-weight: bold" id="`+targetId+`">
+                                                    </pre>
+                                            </div>
+                                            <img src="/imgs/chatbot.png"
+                                                 alt="avatar 1" style="width: 45px; height: 100%;">
+                                        </div>
+                                    `;
+                document.querySelector('#result').prepend(responseArea);
+                return targetId;
             },
             send:async function(blob, audioURL){
+                document.querySelector('#spinner').style.cssText = "visibility:visible;";
+                const audioTargetId = "target-" + crypto.getRandomValues(new Uint32Array(10));
+                this.makeQuestionHtml(audioTargetId);
+                document.getElementById(audioTargetId).src = audioURL;
 
+                const formData = new FormData();
+                formData.append("attach", blob, "speech.mp3");
+
+                const response = await fetch(this.url, {
+                    method: 'POST',
+                    headers: {
+                        'Accept': 'application/x-ndjson'
+                    },
+                    body: formData
+                });
+                const targetId = await this.makeResponseHtml();
+                await this.responseDisplay(response, targetId);
             },
             responseDisplay:async function(response, targetId){
-
+                const target = document.getElementById(targetId);
+                const reader = response.body.getReader();
+                const decoder = new TextDecoder("utf-8");
+                while (true) {
+                    const {value, done} = await reader.read();
+                    if (done) break;
+                    let ch = decoder.decode(value);
+                    target.append(document.createTextNode(ch));
+                }
+                document.querySelector("#spinner").style.cssText = "visibility:hidden;";
             }
         }
         window.onload = function(){

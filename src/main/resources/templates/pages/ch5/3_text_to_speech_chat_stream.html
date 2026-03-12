@@ -9,20 +9,101 @@
         text_to_speech_chat_stream = {
             url: '/ch5/text-to-speech-chat-stream',
             init:function(){
-
+                document.querySelector("#send_btn").addEventListener("click", ()=>{
+                    this.send();
+                })
                 document.querySelector("#spinner").style.cssText = "visibility:hidden;";
             },
             makeQuestionHtml:function(question){
-
+                const questionArea = document.createElement("div");
+                questionArea.innerHTML = `
+                                    <div class="d-flex justify-content-between">
+                                        <p class="small mb-1">User</p>
+                                        <p class="small mb-1 text-muted">`+new Date().toLocaleTimeString('ko-kr')+`</p>
+                                    </div>
+                                    <div class="d-flex flex-row justify-content-start">
+                                        <img src="/imgs/user.jpg"
+                                             alt="User" style="width: 45px; height: 100%;">
+                                        <div>
+                                            <p class="small p-2 ms-3 mb-3 rounded-3 bg-body-tertiary bg-warning">`+question+`</p>
+                                        </div>
+                                    </div>
+                                    `;
+                document.querySelector('#result').prepend(questionArea);
             },
             makeResponseHtml: async function(){
-
+                let targetId = "target-" + crypto.getRandomValues(new Uint32Array(10));
+                const responseArea = document.createElement("div");
+                responseArea.innerHTML = `
+                                        <div class="d-flex justify-content-between">
+                                            <p class="small mb-1 text-muted">`+new Date().toLocaleTimeString('ko-kr')+`</p>
+                                            <p class="small mb-1">Chatbot</p>
+                                        </div>
+                                        <div class="d-flex flex-row justify-content-end mb-4 pt-1">
+                                            <div id="`+targetId+`" class="small p-2 me-3 mb-3 rounded-3 bg-info" style="overflow: auto">
+                                                    <span class="input-group-text me-2">음성 응답</span><br>
+                                                    <audio id="audioTarget" controls></audio>
+                                            </div>
+                                            <img src="/imgs/chatbot.png"
+                                                 alt="Chat Bot" style="width: 45px; height: 100%;">
+                                        </div>
+                                    `;
+                document.querySelector('#result').prepend(responseArea);
+                return targetId;
             },
             send:async function(){
+                document.querySelector('#spinner').style.cssText = "visibility:visible;";
+                const question = document.querySelector('#question').value;
 
+                this.makeQuestionHtml(question);
+
+                const response = await fetch(this.url, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                        'Accept': 'application/octet-stream'
+                    },
+                    body: new URLSearchParams({prompt: question})
+                });
+
+                const targetId = await this.makeResponseHtml();
+                await this.responseDisplay(response, targetId);
             },
             responseDisplay:async function(response, targetId){
+                const container = document.getElementById(targetId);
 
+                const audioPlayer = container.querySelector('#audioTarget');
+
+                const mediaSource = new MediaSource();
+                audioPlayer.src = URL.createObjectURL(mediaSource);
+                audioPlayer.play();
+
+                mediaSource.addEventListener('sourceopen', async () => {
+                    const audioBuffer = mediaSource.addSourceBuffer('audio/mpeg');
+                    const reader = response.body.getReader();
+
+                    function waitForUpdateEnd(buffer) {
+                        return new Promise(resolve => {
+                            // 이벤트가 발생하면 Promise를 처리하도록 리스너 추가
+                            buffer.addEventListener('updateend', resolve, { once: true });
+                        });
+                    }
+                    let cnt = 0;
+                    while (true) {
+                        const { value, done } = await reader.read();
+                        if (done) {
+                            mediaSource.endOfStream();
+                            break;
+                        }
+                        console.log(value);
+                        console.log('Count:  %s ', cnt++);
+
+                        console.log('Value:  %s ', value);
+                        audioBuffer.appendBuffer(value);
+                        await waitForUpdateEnd(audioBuffer);
+                    }
+                });
+                document.querySelector("#spinner").style.cssText = "visibility:hidden;";
             }
         }
         window.onload = function(){
