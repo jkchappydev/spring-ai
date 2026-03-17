@@ -43,8 +43,35 @@ spring:
     livereload:
       enabled: true
 
+  # Datasource
+  datasource:
+    url: jdbc:postgresql://localhost:5432/postgres
+    username: user01
+    password: 111111
+    driver-class-name: org.postgresql.Driver
+
+  # Chat Memory PGVector
+  sql:
+    init:
+      mode: always
+      # Manually Create Chat Memory Pgvector Table
+      schema-locations:
+        - "classpath:/schema/chat_pgvector.sql"
+
   # ai
   ai:
+    # Automatically create chat memory JDBC tables
+    chat:
+      memory:
+        repository:
+          jdbc:
+            initialize-schema: always
+
+    # Vectorstore setting
+    vectorstore:
+      pgvector:
+        initialize-schema: true
+
     openai:
       api-key: ${OPEN_AI_KEY}
       chat:
