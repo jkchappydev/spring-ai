@@ -9,20 +9,78 @@
         mqe_rag_chat = {
             url:'/ch8/mqe-rag-chat',
             init:function(){
-
+                document.querySelector("#send_btn").addEventListener("click", ()=>{
+                    this.send();
+                })
                 document.querySelector("#spinner").style.cssText = "visibility:hidden;";
             },
             makeQuestionHtml:function(question){
-
+                const questionArea = document.createElement("div");
+                questionArea.innerHTML = `
+                                    <div class="d-flex justify-content-between">
+                                        <p class="small mb-1">User</p>
+                                        <p class="small mb-1 text-muted">`+new Date().toLocaleTimeString('ko-kr')+`</p>
+                                    </div>
+                                    <div class="d-flex flex-row justify-content-start">
+                                        <img src="/imgs/user.jpg"
+                                             alt="User" style="width: 45px; height: 100%;">
+                                        <div>
+                                            <p class="small p-2 ms-3 mb-3 rounded-3 bg-body-tertiary bg-warning">`+question+`</p>
+                                        </div>
+                                    </div>
+                                    `;
+                document.querySelector('#result').prepend(questionArea);
             },
             makeResponseHtml: async function(){
-
+                let targetId = "target-" + crypto.getRandomValues(new Uint32Array(10));
+                const responseArea = document.createElement("div");
+                responseArea.innerHTML = `
+                                <div class="d-flex justify-content-between">
+                                    <p class="small mb-1 text-muted">`+new Date().toLocaleTimeString('ko-kr')+`</p>
+                                    <p class="small mb-1">Chatbot</p>
+                                </div>
+                                <div class="d-flex flex-row justify-content-end mb-4 pt-1">
+                                    <div class="small p-2 me-3 mb-3 rounded-3 bg-info" style="overflow: auto">
+                                        <pre class="text-white" style="font-weight: bold" id="`+targetId+`"></pre>
+                                    </div>
+                                    <img src="/imgs/chatbot.png"
+                                         alt="avatar 1" style="width: 45px; height: 100%;">
+                                </div>
+                            `;
+                document.querySelector('#result').prepend(responseArea);
+                return targetId;
             },
             send:async function(){
+                document.querySelector('#spinner').style.cssText = "visibility:visible;";
 
+                let question = document.querySelector('#question').value;
+                let type = document.querySelector('#type').value;
+
+                this.makeQuestionHtml(type+': '+question);
+
+                const response = await fetch(this.url, {
+                    method: "post",
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                        'Accept': 'application/x-ndjson'
+                    },
+                    body: new URLSearchParams({prompt: question, type:type})
+                });
+                const targetId = await this.makeResponseHtml();
+                await this.responseDisplay(targetId, response);
             },
             responseDisplay:async function(targetId, response){
-
+                const target = document.getElementById(targetId);
+                const reader = response.body.getReader();
+                const decoder = new TextDecoder("utf-8");
+                let text = "";
+                while (true) {
+                    const {value, done} = await reader.read();
+                    if (done) break;
+                    let ch = decoder.decode(value);
+                    target.append(document.createTextNode(ch));
+                }
+                document.querySelector("#spinner").style.cssText = "visibility:hidden;";
             }
         }
         window.onload = function(){

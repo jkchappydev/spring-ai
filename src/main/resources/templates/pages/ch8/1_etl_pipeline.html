@@ -10,17 +10,68 @@
             url:'/ch8/add-vector-store',
             deleteUrl:'/ch8/clear-vector-store',
             init:function(){
+                document.querySelector("#send_btn").addEventListener("click", ()=>{
+                    this.send();
+                })
+                document.querySelector("#delete_btn").addEventListener("click", ()=>{
+                    this.delete();
+                })
                 document.querySelector("#spinner").style.cssText = "visibility:hidden;";
-
             },
             delete: async function () {
+                document.querySelector('#spinner').style.cssText = "visibility:visible;";
+                const type = document.querySelector('#type').value;
 
+                const response = await fetch(this.deleteUrl, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                        'Accept': 'text/plain'
+                    },
+                    body: new URLSearchParams({type: type})
+                });
+                const responseText = await response.text();
+                this.responseDisplay(responseText);
             },
             responseDisplay: function(responseText) {
+                const responseArea = document.createElement("div");
 
+                responseArea.innerHTML = `
+                                   <div class="d-flex justify-content-between">
+                                        <p class="small mb-1 text-muted">`+new Date().toLocaleTimeString('ko-kr')+`</p>
+                                        <p class="small mb-1">Chatbot</p>
+                                    </div>
+                                    <div class="d-flex flex-row justify-content-end mb-4 pt-1">
+                                        <div class="small p-2 me-3 mb-3 rounded-3 bg-info" style="overflow: auto">
+                                            <pre class="text-white" style="font-weight: bold">`+responseText+`</pre>
+                                        </div>
+                                        <img src="/imgs/chatbot.png"
+                                            alt="Chat Bot" style="width: 45px; height: 100%;">
+                                    </div>
+                                `;
+
+                document.querySelector('#result').prepend(responseArea);
+                document.querySelector("#spinner").style.cssText = "visibility:hidden;";
             },
             send: async function () {
+                document.querySelector('#spinner').style.cssText = "visibility:visible;";
 
+                const type = document.querySelector('#type').value;
+                const attach = document.getElementById("attach").files[0];
+
+                const formData = new FormData();
+                formData.append("type", type);
+                formData.append("attach", attach);
+
+                const response = await fetch(this.url, {
+                    method: "post",
+                    headers: {
+                        'Accept': 'text/plain'
+                    },
+                    body: formData
+                });
+                const responseText = await response.text();
+                this.responseDisplay(responseText);
             }
         }
         window.onload = function () {
