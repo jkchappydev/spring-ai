@@ -1,0 +1,72 @@
+plugins {
+    id 'java'
+    id 'org.springframework.boot' version '4.0.3'
+    id 'io.spring.dependency-management' version '1.1.7'
+}
+
+ext {
+    springAiVersion = "2.0.0-M2"
+}
+
+group = 'io.springai'
+version = '0.0.1-SNAPSHOT'
+description = 'spring-ai'
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(17)
+    }
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    compileOnly 'org.projectlombok:lombok'
+    developmentOnly 'org.springframework.boot:spring-boot-devtools'
+    runtimeOnly 'org.postgresql:postgresql'
+    annotationProcessor 'org.projectlombok:lombok'
+
+    // spring-ai-openai
+    implementation 'org.springframework.ai:spring-ai-openai'
+    implementation 'org.springframework.ai:spring-ai-starter-model-openai'
+
+    // test (Reactor(Mono, Flux) 비동기 로직을 테스트할 때 쓰는 테스트 전용 라이브러리 - WebFlux 나 Reactor 코드 테스트하려고 넣은 것)
+    testImplementation 'io.projectreactor:reactor-test'
+
+    // pgvector
+    implementation 'org.springframework.ai:spring-ai-starter-vector-store-pgvector'
+    implementation 'org.springframework.ai:spring-ai-advisors-vector-store'
+
+    // jdbc chat memory
+    implementation 'org.springframework.ai:spring-ai-starter-model-chat-memory-repository-jdbc'
+
+    // Rag & Utility
+    implementation 'org.springframework.ai:spring-ai-rag'
+    implementation 'org.springframework.ai:spring-ai-pdf-document-reader'
+    implementation 'org.springframework.ai:spring-ai-tika-document-reader'
+    implementation 'org.springframework.ai:spring-ai-jsoup-document-reader'
+
+    // MCP
+    // implementation 'org.springframework.ai:spring-ai-starter-mcp-client'
+    // mcp-client-webflux로 설정 하면 webmvc도 진행이 가능 함
+    implementation 'org.springframework.ai:spring-ai-starter-mcp-client-webflux'
+
+    testImplementation 'org.projectlombok:lombok'
+    testAnnotationProcessor 'org.projectlombok:lombok'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+}
+
+dependencyManagement {
+    imports {
+        mavenBom "org.springframework.ai:spring-ai-bom:${springAiVersion}"
+    }
+}
+
+tasks.named('test') {
+    useJUnitPlatform()
+}

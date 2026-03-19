@@ -1,0 +1,26 @@
+server:
+  port: 8088
+
+spring:
+  application:
+    name: project
+  profiles:
+    active: local
+  ai:
+    mcp:
+      server:
+        name: mcp-server-weather-webmvc
+        version: 0.0.1
+        request-timeout: 20s
+        protocol: sse  #default
+        sse-endpoint: /custom-sse
+        type: sync # default sync (webmvc 는 sync)
+  devtools:
+    restart:
+      enabled: true
+    livereload:
+      enabled: true
+
+logging:
+  level:
+    root: INFO

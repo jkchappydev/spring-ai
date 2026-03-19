@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+
+
+
+<th:block>
+
+    <script>
+        mcp_access = {
+            url:'/ch9/access',
+            myVideoStream:null,
+            targetId:'',
+            init:function(){
+                document.querySelector("#spinner").style.cssText = "visibility:hidden;";
+                // Camera Start
+                this.getVideo();
+                // Capture And Send
+                document.querySelector("#capture_btn").addEventListener("click", ()=>{
+                    this.takeSnapshot();
+                });
+            },
+            getVideo:function(){
+                this.myVideoStream = document.querySelector('#video_area');
+                navigator.getMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia || navigator.msGetUserMedia;
+                navigator.getMedia(
+                    {video: true, audio: false},(stream)=>{
+                        this.myVideoStream.srcObject = stream;
+                        this.myVideoStream.play();
+                    },(error)=>{
+                        alert('webcam not working');
+                    });
+            },
+            takeSnapshot: async function(){
+                const targetId = await this.makePreviewHtml();
+                const myCanvasElement = document.getElementById(targetId);
+                const myCTX = myCanvasElement.getContext('2d');
+                myCTX.drawImage(this.myVideoStream, 0, 0, myCanvasElement.width, myCanvasElement.height);
+                this.targetId = targetId;
+                await this.send();
+            },
+            makePreviewHtml: async function(){
+                const targetId = "target-" + crypto.getRandomValues(new Uint32Array(10));
+                const previewArea = document.createElement("div");
+                previewArea.innerHTML = `
+                                <div class="d-flex justify-content-between">
+                                    <p class="small mb-1">User</p>
+                                    <p class="small mb-1 text-muted">`+new Date().toLocaleTimeString('ko-kr')+`</p>
+                                </div>
+                                <div class="d-flex flex-row justify-content-start">
+                                    <img src="/imgs/user.jpg"
+                                         alt="avatar 1" style="width: 45px; height: 100%;">
+                                    <div>
+                                        <p>선택한 이미지 입니다.</p>
+                                          <canvas id="`+targetId+`" width="160" height="140" style="border: 1px solid #ddd;"></canvas><br>
+                                    </div>
+                                </div>
+                                `;
+                document.querySelector('#result').prepend(previewArea);
+                return targetId;
+            },
+            send:async function(){
+                document.querySelector('#spinner').style.cssText = "visibility:visible;";
+                const canvas = document.getElementById(this.targetId);
+                const imgBase64 = canvas.toDataURL('image/jpeg', 'image/octet-stream');
+                const decodeImg = atob(imgBase64.split(',')[1]);
+                let array = [];
+                for (let i = 0; i < decodeImg.length; i++) {
+                    array.push(decodeImg.charCodeAt(i));
+                }
+                const file = new Blob([new Uint8Array(array)], {type: 'image/jpeg'});
+                const fileName = 'snapshot_' + new Date().getMilliseconds() + '.jpg';
+
+                const formData = new FormData();
+                formData.append('attach', file, fileName);
+                const response = await fetch(this.url, {
+                    method: "post",
+                    headers: {
+                        'Accept': 'text/plain'
+                    },
+                    body: formData
+                });
+                const responseText = await  response.text();
+                this.responseDisplay(responseText);
+            },
+            responseDisplay: function(result){
+                document.querySelector("#spinner").style.cssText = "visibility:hidden;";
+                const responseArea = document.createElement("div");
+                responseArea.innerHTML = `
+                                <div class="d-flex justify-content-between">
+                                    <p class="small mb-1 text-muted">`+new Date().toLocaleTimeString('ko-kr')+`</p>
+                                    <p class="small mb-1">Chatbot</p>
+                                </div>
+                                <div class="d-flex flex-row justify-content-end mb-4 pt-1">
+                                    <div class="small p-2 me-3 mb-3 rounded-3 bg-info" style="overflow: auto">
+                                        <pre class="text-white" style="text-align:left;font-weight: bold">`+result+`</pre>
+                                    </div>
+                                    <img src="/imgs/chatbot.png"
+                                        alt="Chat Bot" style="width: 45px; height: 100%;">
+                                </div>
+                            `;
+                document.querySelector('#result').prepend(responseArea);
+            }
+        }
+        window.onload = function(){
+            mcp_access.init();
+        }
+    </script>
+
+
+    <div class="col-sm-10">
+        <h2 class="text-center">2. Mcp Access</h2>
+        <div class="container py-5">
+
+            <div class="row d-flex justify-content-center">
+                <div class="col-sm-9">
+                    <button class="btn btn-primary" disabled id="spinner">
+                        <span class="spinner-border spinner-border-sm" ></span>
+                        Loading..
+                    </button>
+                    <div class="card">
+
+                        <div class="card-header text-muted d-flex justify-content-start align-items-center p-3">
+                            <div class="input-group mr-0">
+                                <button type="button" class="btn btn-warning" id="capture_btn">Image Capture & Send</button>
+                            </div>
+                        </div>
+                        <div id="result" class="card-body" data-mdb-perfect-scrollbar-init >
+
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-3">
+                    <video id="video_area" src="" alt="" height="300px" autoplay style="border:1px solid blue"/>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</th:block>
+
+</html>
