@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+
+<th:block>
+
+    <h2>React Setting</h2><br>
+    <h4>1. Node 설치</h4><br>
+    <a href="https://nodejs.org/ko/download"  target="_blank">Node.js Download</a><br><br>
+
+    <p>V22.22.0 선택 후 하단에 Windows 설치 프로그램 (.msi) 다운로드 클릭 또는 OS 맞게 다운로드</p>
+    <p>설치 완료 후 PowerShell에서 다양한 업그레이드 진행</p>
+
+    <img th:src="@{/imgs/node1.png}" width="600px;"><br><br>
+
+    <h4>2. VSCode 설치</h4><br>
+    <a href="https://code.visualstudio.com/download"  target="_blank">VSCode Download</a><br><br>
+    <p>다운로드 후 기본으로 설치</p>
+    <img th:src="@{/imgs/vscode.png}" width="600px;"><br><br>
+
+    <h4>3. Frontend 코드 Download</h4><br>
+    <p>강의 수강 신청 후 코드 다운로드</p>
+    <p>다운로드 파일을 압축 해제 후 VSCode에서 File > Open Folder </p><br>
+    <p>프론트엔드 구성</p>
+    <ul>
+        <li>React 19.2.0 + TypeScript</li>
+        <li>Vite (빌드 도구)</li>
+        <li>React Router 7.10.1</li>
+        <li>Axios / Fetch API (API 통신)</li>
+    </ul>
+    <img th:src="@{/imgs/react.png}" width="600px;"><br><br>
+
+    <h4>4. Frontend Install & Run</h4><br>
+    <p>SpringBoot 에서 모든 서버 실행 후 진행</p>
+    <p>개발 서버 실행 후 Browser에서 http://127.0.0.1:5173 으로 접속</p>
+    <p>Terminal Open 후 아래 내용을 실행 ( ... > Terminal > New Terminal)</p>
+    <pre style="border:1px solid cornflowerblue">
+
+       # 처음 실행 시 의존성 설치
+        npm install
+
+        # 개발 서버 시작 (http://localhost:5173)
+        npm run dev
+    </pre><br>
+    <p>Node.js 버전 문제 시 </p>
+    <pre style="border:1px solid cornflowerblue">
+
+        # nvm 사용 시
+        nvm install 22
+        nvm use 22
+
+        # 또는
+        nvm install --lts
+        nvm use --lts
+    </pre><br>
+    <p>npm install 실패 </p>
+    <pre style="border:1px solid cornflowerblue">
+
+        # 캐시 삭제 후 재시도
+        npm cache clean --force
+        rm -rf node_modules package-lock.json
+        npm install
+    </pre><br>
+
+
+</th:block>
+
+</html>
